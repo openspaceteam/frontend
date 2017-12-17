@@ -50,6 +50,7 @@
   body {
     height: 100%;
     margin: 0 auto;
+    overflow: hidden;
   }
   .space-font {
     font-family: 'Bungee', cursive;
@@ -199,7 +200,12 @@
 
   @media screen and (max-width: 800px) {
     .menu-pane {
+      padding-top: 100px;
       width: 95%;
+    }
+
+    h1 {
+      font-size: 200%;
     }
   }
 

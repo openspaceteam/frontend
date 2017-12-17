@@ -199,4 +199,10 @@
     text-shadow: 1px 1px 1px #bc4809;
   }
 
+  @media screen and (max-width: 800px) {
+    .btn-push>span.big {
+      font-size: 20px;
+    }
+  }
+
 </style>

@@ -67,5 +67,11 @@
     #join {
       width: 95%;
     }
+
+    #join>div>div>.games {
+      height: 200px;
+      min-height: 200px;
+      overflow-y: scroll;
+    }
   }
 </style>

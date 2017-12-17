@@ -3,23 +3,21 @@
     <div id="title" class="space-font pacchiano">
       Spaceteam
     </div>
-    <div id="subtitle" class="space-font-mono">
-      Simulatore collaborativo di disastri spaziali
-    </div>
-    <div class="actions">
-      <div>
-        <push-button @click="$router.push('/host')" class="space-font-mono" big>Ospita</push-button>
+    <div class="actions separated-container">
+      <div id="subtitle" class="space-font-mono">
+        Simulatore collaborativo di disastri spaziali
       </div>
-      <div>
-        <push-button @click="$router.push('/join')" class="space-font-mono" big>Unisciti</push-button>
-      </div>
+      <push-button @click="$router.push('/host')" class="space-font-mono" big :disabled="!connected">Ospita</push-button>
+      <push-button @click="$router.push('/join')" class="space-font-mono" big :disabled="!connected">Unisciti</push-button>
     </div>
-    <icon @click.native="toggleMusic()" class="mute-icon" :name="playingMusic ? 'volume-down' : 'volume-off'" scale="5"></icon>
+    <icon @click.native="toggleMusic()" class="mute-icon" :name="playingMusic ? 'volume-down' : 'volume-off'" scale="3"></icon>
     <div id="footer" class="space-font-mono">
       <span>v0.1 ~ </span>
       <span>Realizzato da Giuseppe Guerra per l'ISIS Di Maggio ~ </span>
       <span>Stato server:</span>
-      <icon name="check-circle"></icon>
+      <icon v-if="connecting" name="spinner" class="connecting" pulse></icon>
+      <icon v-else-if="connected && !connecting" class="online" name="check-circle"></icon>
+      <icon v-else-if="!connected && !connecting" class="offline" name="unlink"></icon>
     </div>
   </div>
 </template>
@@ -28,7 +26,9 @@
   export default {
     data () {
       return {
-        playingMusic: this.isBgmPlaying()
+        playingMusic: this.isBgmPlaying(),
+        connected: false,
+        connecting: true
       }
     },
     mounted () {
@@ -36,6 +36,10 @@
 //        this.playBgm('static/music/menu.wav')
         this.$store.commit('menuMusicInitialized')
       }
+      setTimeout(() => {
+        this.connected = true
+        this.connecting = false
+      }, 1000)
     },
     methods: {
       toggleMusic () {
@@ -85,10 +89,6 @@
     margin: 0 auto;
   }
 
-  .actions>div {
-    padding-top: 20px;
-  }
-
   .mute-icon {
     position: absolute;
     right: 0;
@@ -108,7 +108,16 @@
 
   #footer>svg {
     vertical-align: middle;
+  }
+
+  #footer>.online {
     color: greenyellow;
+  }
+  #footer>.connecting {
+    color: cornflowerblue;
+  }
+  #footer>.offline {
+    color: yellow;
   }
 
   @keyframes start-fade-in {
@@ -125,6 +134,30 @@
   @media screen and (max-width: 800px) {
     .actions {
       width: 95%;
+    }
+
+    #title {
+      height: 70px;
+      margin-top: 150px;
+    }
+
+    #subtitle {
+      font-size: 80%;
+    }
+
+    @keyframes title-animation {
+      from {
+        font-size: 350%;
+        transform: rotate(3deg);
+      }
+      50% {
+        font-size: 330%;
+        transform: rotate(0);
+      }
+      to {
+        font-size: 350%;
+        transform: rotate(-3deg);
+      }
     }
   }
 </style>
