@@ -8,11 +8,15 @@ import 'vue-awesome/icons'
 import Icon from 'vue-awesome/components/Icon.vue'
 import Store from './store'
 import Bus from './bus'
+import AudioMixin from './audio'
+import PushButton from './components/objects/PushButton.vue'
 
 Vue.component('icon', Icon)
 Vue.use(Element)
 Vue.prototype.$store = Store
 Vue.prototype.$bus = Bus
+Vue.mixin(AudioMixin)
+Vue.component('push-button', PushButton)
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

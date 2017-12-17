@@ -1,33 +1,95 @@
 <template>
   <div class="btn-push"
+       :class="{ big, small, disabled, enabled }"
        @mousedown="mouseDown()"
        @mouseup="mouseUp()"
+       @click="click()"
   >
-  <slot></slot></div>
+    <span :class="{ big, small, bold }">
+      <slot></slot>
+    </span>
+  </div>
 </template>
 
 <script>
   export default {
     methods: {
       mouseDown () {
-        this.$bus.$emit('playSound', 'buttonDown')
+        if (!this.disabled) {
+          this.playSound('sounds/button_down.mp3')
+        }
       },
       mouseUp () {
-        this.$bus.$emit('playSound', 'buttonUp')
+        if (!this.disabled) {
+          this.playSound('sounds/button_up.mp3')
+        }
+      },
+      click () {
+        if (!this.disabled) {
+          this.$emit('click')
+        }
+      },
+    },
+    props: {
+      big: {
+        type: Boolean,
+        required: false,
+        default: false
+      },
+      small: {
+        type: Boolean,
+        required: false,
+        default: false
+      },
+      bold: {
+        type: Boolean,
+        required: false,
+        default: false
+      },
+      disabled: {
+        type: Boolean,
+        required: false,
+        default: false
+      }
+    },
+    computed: {
+      enabled () {
+        return !this.disabled
       }
     }
   }
 </script>
 
 <style>
+  .btn-push>span.big {
+    font-size: 25px;
+  }
+  .btn-push>span.small {
+    font-size: 12px;
+  }
+
+  .btn-push.disabled {
+    opacity: 0.3;
+  }
+
+  .btn-push.big {
+    padding: 15px 50px;
+  }
+
+  .btn-push.small {
+    padding: 0px 50px;
+  }
+  .btn-push>span>span:nth-child(1) {
+    vertical-align: middle;
+  }
   .btn-push {
     position: relative;
     top: 0;
+    font-size: 16px;
     text-decoration: none;
-    font-size: 25px;
     background: #f7f7f7;
-    padding: 15px 50px;
-    margin: 0 10px;
+    /*margin: 0 10px;*/
+    padding: 5px 50px;
     border: 1px solid #c4c4c4;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
@@ -47,7 +109,7 @@
     cursor: pointer;
   }
   /*==========  Active State  ==========*/
-  .btn-push:active {
+  .btn-push.enabled:active {
     position: relative;
     top: 5px;
     -webkit-box-shadow: none !important;

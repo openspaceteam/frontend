@@ -8,10 +8,10 @@
     </div>
     <div class="actions">
       <div>
-        <push-button @click.native="$router.push('/host')" class="space-font-mono">Ospita</push-button>
+        <push-button @click="$router.push('/host')" class="space-font-mono" big>Ospita</push-button>
       </div>
       <div>
-        <push-button class="space-font-mono">Unisciti</push-button>
+        <push-button @click="$router.push('/join')" class="space-font-mono" big>Unisciti</push-button>
       </div>
     </div>
     <icon @click.native="toggleMusic()" class="mute-icon" :name="playingMusic ? 'volume-down' : 'volume-off'" scale="5"></icon>
@@ -25,43 +25,34 @@
 </template>
 
 <script>
-  import PushButton from '@/components/objects/PushButton.vue'
-
   export default {
     data () {
       return {
-        playingMusic: true
+        playingMusic: this.isBgmPlaying()
       }
     },
-    components: {
-      PushButton
-    },
     mounted () {
-//      this.$bus.$emit('playSound', 'menu')
+      if (!this.$store.getters.menuMusicInitialized) {
+//        this.playBgm('static/music/menu.wav')
+        this.$store.commit('menuMusicInitialized')
+      }
     },
     methods: {
       toggleMusic () {
-        this.$bus.$emit('toggleSound', 'menu')
-        this.playingMusic = !this.playingMusic
+        if (this.isBgmPlaying()) {
+          this.stopBgm()
+        } else {
+          this.playBgm('static/music/menu.wav')
+        }
+        this.playingMusic = this.isBgmPlaying()
       }
     }
   }
 </script>
 
 <style>
-  html {
-    animation: move-intro-top-background 2s linear infinite;
-  }
-
-  @keyframes move-intro-top-background {
-    from { background-position-x: 0; }
-    to { background-position-x: -200%; }
-  }
-
   #start {
     color: white;
-    /*opacity: 1;*/
-    /*animation: start-fade-in 1.75s 0.5s ease-out forwards;*/
   }
 
   #title {
@@ -133,7 +124,7 @@
 
   @media screen and (max-width: 800px) {
     .actions {
-      width: 100%;
+      width: 95%;
     }
   }
 </style>
