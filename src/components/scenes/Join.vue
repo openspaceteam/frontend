@@ -54,8 +54,8 @@
 
 <style>
   #join>div>div>.games {
-    height: 400px;
-    min-height: 400px;
+    height: 300px;
+    min-height: 300px;
     overflow-y: scroll;
   }
 

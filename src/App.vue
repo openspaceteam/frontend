@@ -10,7 +10,6 @@
 </template>
 
 <script>
-  import AudioPool from '@/AudioPool.vue'
   import Loading from '@/components/scenes/Loading.vue'
 
   export default {
@@ -20,7 +19,6 @@
       }
     },
     components: {
-      AudioPool,
       Loading
     }
   }
