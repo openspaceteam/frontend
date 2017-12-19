@@ -43,7 +43,13 @@ new Vue({
   components: { App },
   mounted () {
     // Connect when the app is mounted on the DOM
-    Vue.prototype.$io = io(Config.serverURL)
+    Vue.prototype.$io = io(Config.serverURL, {
+      transports: ['websocket', 'xhr-polling', 'polling', 'htmlfile', 'flashsocket'],
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      reconnectionAttempts: Infinity
+    })
 
     // Enable wildcard support
     SocketIOWildcard(io.Manager)(this.$io)
