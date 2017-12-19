@@ -45,6 +45,10 @@
         } else {
           this.error = false
           this.loading = true
+          this.$io.emit('create_game', {
+            name: this.name,
+            'public': this.pub
+          })
         }
       },
       changeGameType () {

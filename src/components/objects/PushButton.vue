@@ -28,7 +28,7 @@
         if (!this.disabled) {
           this.$emit('click')
         }
-      },
+      }
     },
     props: {
       big: {

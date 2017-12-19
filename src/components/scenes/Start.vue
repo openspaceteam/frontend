@@ -8,7 +8,7 @@
         Simulatore collaborativo di disastri spaziali
       </div>
       <push-button @click="$router.push('/host')" class="space-font-mono" big :disabled="!connected">Ospita</push-button>
-      <push-button @click="$router.push('/join')" class="space-font-mono" big :disabled="!connected">Unisciti</push-button>
+      <push-button @click="joinLobby()" class="space-font-mono" big :disabled="!connected">Unisciti</push-button>
     </div>
     <icon @click.native="toggleMusic()" class="mute-icon" :name="playingMusic ? 'volume-down' : 'volume-off'" scale="3"></icon>
     <div id="footer" class="space-font-mono">
@@ -26,9 +26,7 @@
   export default {
     data () {
       return {
-        playingMusic: this.isBgmPlaying(),
-        connected: false,
-        connecting: true
+        playingMusic: this.isBgmPlaying()
       }
     },
     mounted () {
@@ -36,10 +34,6 @@
 //        this.playBgm('static/music/menu.wav')
         this.$store.commit('menuMusicInitialized')
       }
-      setTimeout(() => {
-        this.connected = true
-        this.connecting = false
-      }, 1000)
     },
     methods: {
       toggleMusic () {
@@ -49,6 +43,17 @@
           this.playBgm('static/music/menu.wav')
         }
         this.playingMusic = this.isBgmPlaying()
+      },
+      joinLobby () {
+        this.$router.push('/join')
+      }
+    },
+    computed: {
+      connecting () {
+        return this.$store.getters.isConnecting
+      },
+      connected () {
+        return this.$store.getters.isConnected
       }
     }
   }
