@@ -44,15 +44,19 @@ new Vue({
   mounted () {
     // Connect when the app is mounted on the DOM
     Vue.prototype.$io = io(Config.serverURL)
+
+    // Enable wildcard support
     SocketIOWildcard(io.Manager)(this.$io)
-    console.log(this.$io)
+
     this.$io.on('connect', () => {
       console.log('connected')
       this.$store.commit('connected')
+      this.$bus.$emit('#connect')
 
       this.$io.on('disconnect', () => {
         console.warn('disconnected')
         this.$store.commit('connectionFailed')
+        this.$bus.$emit('#disconnect')
       })
       this.$io.on('lobby_joined', (data) => {
         console.log(data)
@@ -60,11 +64,14 @@ new Vue({
         this.$router.push('lobby/' + data.game_id)
       })
       this.$io.on('*', (eventData) => {
-        console.log('Got arbitrary event')
+        // Emit all unbound events to the global event bus
+        // as #event_name, so components can listen to them
         let [event, data] = eventData.data
+        console.log('Got arbitrary event #' + event)
         this.$bus.$emit('#' + event, data)
-        console.log('emitting on #' + event)
       })
+
+      this.$bus.$emit('#connected')
     })
   }
 })

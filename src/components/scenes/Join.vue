@@ -4,7 +4,10 @@
       <h1 class="space-font pacchiano">Partite disponibili</h1>
       <div v-if="!loading && !joining" class="separated-container">
         <div class="games">
-          <push-button v-for="(game, gameID) in games" :disabled="game.players == game.max_players" :class="{ green: game.players < game.max_players }">
+          <push-button
+            v-for="(game, gameID) in games" :disabled="game.players == game.max_players"
+            @click="joinGame(gameID)"
+            :class="{ green: game.players < game.max_players }">
             <span>
               <icon name="rocket" v-if="game.players < game.max_players"></icon>
               <icon name="lock" v-else></icon>
@@ -16,7 +19,7 @@
           <span><icon name="lock"></icon></span>
           Accedi a una partita privata
         </push-button>
-        <push-button bold @click="leaveLobby()">
+        <push-button bold @click="$router.push('/')">
           <span><icon name="chevron-left"></icon></span>
           Indietro
         </push-button>
@@ -42,9 +45,13 @@
       }
     },
     methods: {
-      leaveLobby () {
-        this.$io.emit('leave_lobby')
-        this.$router.push('/')
+      joinGame (gameID) {
+        this.$io.$emit('join_game', {
+          'game_id': gameID
+        })
+      },
+      joinLobby () {
+        this.$io.emit('join_lobby')
       }
     },
     mounted () {
@@ -55,11 +62,17 @@
       this.$bus.$on('#lobby_disposed', (data) => {
         this.$delete(this.games, data.game_id)
       })
-      this.$io.emit('join_lobby')
+      this.$bus.$on('#connect', () => {
+        this.joinLobby()
+      })
+      if (this.$store.getters.isConnected) {
+        this.joinLobby()
+      }
     },
     destroyed () {
       this.$bus.$off('#lobby_info')
       this.$bus.$off('#lobby_disposed')
+      this.$io.emit('leave_lobby')
     }
   }
 </script>
