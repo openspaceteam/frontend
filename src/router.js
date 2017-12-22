@@ -5,6 +5,7 @@ import Start from '@/components/scenes/Start.vue'
 import Host from '@/components/scenes/Host.vue'
 import Join from '@/components/scenes/Join.vue'
 import JoinPrivate from '@/components/scenes/JoinPrivate.vue'
+import Lobby from '@/components/scenes/Lobby.vue'
 
 Vue.use(Router)
 
@@ -35,6 +36,11 @@ export default new Router({
       path: '/game',
       name: 'Intro',
       component: Intro
+    },
+    {
+      path: '/lobby/:gameID',
+      name: 'Lobby',
+      component: Lobby
     }
   ]
 })

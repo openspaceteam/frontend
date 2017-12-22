@@ -7,7 +7,8 @@
           <push-button
             v-for="(game, gameID) in games" :disabled="game.players == game.max_players"
             @click="joinGame(gameID)"
-            :class="{ green: game.players < game.max_players }">
+            :class="{ green: game.players < game.max_players }"
+            :key="game.game_id">
             <span>
               <icon name="rocket" v-if="game.players < game.max_players"></icon>
               <icon name="lock" v-else></icon>

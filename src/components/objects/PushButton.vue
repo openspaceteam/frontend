@@ -1,6 +1,6 @@
 <template>
   <div class="btn-push"
-       :class="{ big, small, disabled, enabled }"
+       :class="{ big, small, disabled, enabled, fitted }"
        @mousedown="mouseDown()"
        @mouseup="mouseUp()"
        @click="click()"
@@ -50,6 +50,11 @@
         type: Boolean,
         required: false,
         default: false
+      },
+      fitted: {
+        type: Boolean,
+        required: false,
+        default: false
       }
     },
     computed: {
@@ -79,9 +84,15 @@
   .btn-push.small {
     padding: 0px 50px;
   }
+
   .btn-push>span>span:nth-child(1) {
     vertical-align: middle;
   }
+
+  .btn-push.fitted {
+    padding: 0 24px 0 24px;
+  }
+
   .btn-push {
     position: relative;
     top: 0;
