@@ -1,6 +1,6 @@
 <template>
   <div class="btn-push"
-       :class="{ big, small, disabled, enabled, fitted }"
+       :class="{ big, small, disabled, enabled, fitted, inline }"
        @mousedown="mouseDown()"
        @mouseup="mouseUp()"
        @click="click()"
@@ -55,6 +55,11 @@
         type: Boolean,
         required: false,
         default: false
+      },
+      inline: {
+        type: Boolean,
+        required: false,
+        default: false
       }
     },
     computed: {
@@ -91,6 +96,10 @@
 
   .btn-push.fitted {
     padding: 0 24px 0 24px;
+  }
+
+  .btn-push.inline {
+    display: inline-block;
   }
 
   .btn-push {

@@ -196,6 +196,12 @@
     margin-bottom: 15px;
   }
 
+  .clearfix::after {
+    clear: both;
+    display: table;
+    content: "";
+  }
+
   @media screen and (max-width: 800px) {
     .menu-pane {
       padding-top: 100px;

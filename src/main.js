@@ -54,9 +54,12 @@ new Vue({
     // Enable wildcard support
     SocketIOWildcard(io.Manager)(this.$io)
 
+    this.$io.on('welcome', (data) => {
+      console.log('Greeted by server with uid ' + data.uid)
+      this.$store.commit('connected', data.uid)
+    })
+
     this.$io.on('connect', () => {
-      console.log('connected')
-      this.$store.commit('connected')
       this.$bus.$emit('#connect')
 
       this.$io.on('disconnect', () => {
@@ -64,17 +67,25 @@ new Vue({
         this.$store.commit('connectionFailed')
         this.$bus.$emit('#disconnect')
       })
-      this.$io.on('lobby_joined', (data) => {
+      this.$io.on('game_join_success', (data) => {
         console.log(data)
         this.playSound('sounds/lobby_join.wav')
-        this.$router.push('lobby/' + data.game_id)
+        this.$router.push('/lobby/' + data.game_id)
+      })
+      this.$io.on('error_*', (eventData) => {
       })
       this.$io.on('*', (eventData) => {
         // Emit all unbound events to the global event bus
         // as #event_name, so components can listen to them
         let [event, data] = eventData.data
-        console.log('Got arbitrary event #' + event)
-        this.$bus.$emit('#' + event, data)
+        if (event.startsWith('error_')) {
+          console.error('Got error from server (' + event + '). Data below.')
+          console.log(data)
+        } else {
+          console.log('Got arbitrary event #' + event + '. Data below.')
+          console.log(data)
+          this.$bus.$emit('#' + event, data)
+        }
       })
 
       this.$bus.$emit('#connected')

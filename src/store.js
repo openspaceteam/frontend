@@ -9,7 +9,8 @@ export default new Vuex.Store({
     socket: {
       connected: false,
       connecting: true
-    }
+    },
+    uid: -1
   },
   getters: {
     menuMusicInitialized (state) {
@@ -20,15 +21,20 @@ export default new Vuex.Store({
     },
     isConnected (state) {
       return state.socket.connected
+    },
+    uid (state) {
+      return state.uid
     }
   },
   mutations: {
     menuMusicInitialized (state) {
       state.menuMusicInitialized = true
     },
-    connected (state) {
+    connected (state, uid) {
       state.socket.connecting = false
       state.socket.connected = true
+      state.uid = uid
+      console.log(state.uid)
     },
     connectionFailed (state) {
       state.socket.connecting = false

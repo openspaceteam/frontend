@@ -56,6 +56,11 @@
       }
     },
     mounted () {
+      this.$bus.$on('#game_join_fail', (data) => {
+        this.playSound('sounds/error.wav')
+        console.error(data.message)
+      })
+      // game_join_success is globally registered (used it host page as well)
       this.$bus.$on('#lobby_info', (data) => {
         // NOTE: https://vuejs.org/v2/guide/reactivity.html#Change-Detection-Caveats
         this.$set(this.games, data.game_id, data)
