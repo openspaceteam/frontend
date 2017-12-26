@@ -1,5 +1,7 @@
 <template>
-  <div id="lobby" class="menu-pane separated-container">
+  <div>
+    <div class="fader" v-if="inIntro"></div>
+    <div id="lobby" class="menu-pane separated-container">
     <h1 class="space-font pacchiano">Lobby</h1>
     <div>
       <div class="separated-container slot" v-for="(slot, index) in slots" :class="{ green: slot !== null && slot.ready }">
@@ -68,6 +70,7 @@
       </push-button>
     </div>
   </div>
+  </div>
 </template>
 
 <script>
@@ -113,6 +116,9 @@ export default {
     this.$bus.$on('#game_started', (data) => {
       this.inIntro = true
       this.playSound('sounds/game_start.mp3')
+      setTimeout(() => {
+        this.$router.push('/game')
+      }, 2200)
     })
   },
   methods: {
@@ -280,7 +286,15 @@ export default {
   #lobby>#exit {
     margin-top: 30px;
   }
+
+  .fader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    z-index: 10000;
+    animation: fade-in 2.2s;
+  }
 </style>
-
-
-

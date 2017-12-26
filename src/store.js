@@ -6,6 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     menuMusicInitialized: false,
+    audioContext: new AudioContext(),
     socket: {
       connected: false,
       connecting: true
@@ -24,6 +25,9 @@ export default new Vuex.Store({
     },
     uid (state) {
       return state.uid
+    },
+    audioContext (state) {
+      return state.audioContext
     }
   },
   mutations: {

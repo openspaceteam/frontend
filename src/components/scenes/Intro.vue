@@ -20,7 +20,6 @@
   import WelcomeText from '@/components/objects/WelcomeText.vue'
 
   export default {
-    name: 'app',
     data () {
       return {
         printingWelcome: true
@@ -29,6 +28,9 @@
     components: {
       Ship,
       WelcomeText
+    },
+    mounted () {
+      this.playBgm('static/music/ship_engine.mp3')
     }
   }
 </script>

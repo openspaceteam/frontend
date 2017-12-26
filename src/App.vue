@@ -202,6 +202,11 @@
     content: "";
   }
 
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
   @media screen and (max-width: 800px) {
     .menu-pane {
       padding-top: 100px;
