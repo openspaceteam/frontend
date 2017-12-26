@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+
+import Store from './store.js'
 import Intro from '@/components/scenes/Intro.vue'
 import Start from '@/components/scenes/Start.vue'
 import Host from '@/components/scenes/Host.vue'
@@ -9,7 +11,7 @@ import Lobby from '@/components/scenes/Lobby.vue'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   routes: [
     {
@@ -35,12 +37,28 @@ export default new Router({
     {
       path: '/game',
       name: 'Intro',
-      component: Intro
+      component: Intro,
+      meta: {
+        game: true
+      }
     },
     {
       path: '/lobby/:gameID',
       name: 'Lobby',
-      component: Lobby
+      component: Lobby,
+      meta: {
+        game: true
+      }
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.game) && !Store.getters.inGame) {
+    next('/')
+  } else {
+    next()
+  }
+})
+
+export default router

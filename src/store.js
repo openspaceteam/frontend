@@ -11,7 +11,8 @@ export default new Vuex.Store({
       connected: false,
       connecting: true
     },
-    uid: -1
+    uid: -1,
+    inGame: false
   },
   getters: {
     menuMusicInitialized (state) {
@@ -28,6 +29,9 @@ export default new Vuex.Store({
     },
     audioContext (state) {
       return state.audioContext
+    },
+    inGame (state) {
+      return state.inGame
     }
   },
   mutations: {
@@ -43,6 +47,9 @@ export default new Vuex.Store({
     connectionFailed (state) {
       state.socket.connecting = false
       state.socket.connected = false
+    },
+    inGame (state, newInGameStatus) {
+      state.inGame = newInGameStatus
     }
   }
 })

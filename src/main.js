@@ -65,14 +65,13 @@ new Vue({
       this.$io.on('disconnect', () => {
         console.warn('disconnected')
         this.$store.commit('connectionFailed')
+        this.$store.commit('inGame', false)
         this.$bus.$emit('#disconnect')
       })
       this.$io.on('game_join_success', (data) => {
-        console.log(data)
         this.playSound('sounds/lobby_join.wav')
+        this.$store.commit('inGame', true)
         this.$router.push('/lobby/' + data.game_id)
-      })
-      this.$io.on('error_*', (eventData) => {
       })
       this.$io.on('*', (eventData) => {
         // Emit all unbound events to the global event bus
