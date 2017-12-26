@@ -6,7 +6,7 @@
     </div>
     <div class="bottom" v-if="printingWelcome">
       <welcome-text @completed="printingWelcome = false"></welcome-text>
-      <img class="fast-forward" @click='printingWelcome = false' src="assets/icons/fastForward.png">
+      <icon class="fast-forward" @click='printingWelcome = false' name="forward" scale="2"></icon>
     </div>
     <div class="bottom loading" v-if="!printingWelcome">
       <div><icon class="loading-icon" name="circle-o-notch" scale="3" spin></icon></div>
@@ -95,10 +95,9 @@
   }
 
   .bottom>.fast-forward {
-    transform: scale(0.5);
     position: absolute;
-    right: 0;
-    bottom: 0;
+    right: 20px;
+    bottom: 20px;
     opacity: 0.5;
     animation: intro-ff-fade 1s forwards;
   }
