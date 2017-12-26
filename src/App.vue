@@ -37,7 +37,7 @@
     animation: move-intro-top-background 2s linear infinite;
     background-image: url('./assets/black.png');
     height: 100%;
-    overflow: hidden;
+    /* overflow: hidden; */
 
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -48,7 +48,7 @@
   body {
     height: 100%;
     margin: 0 auto;
-    overflow: hidden;
+    /* overflow: hidden; */
   }
   .space-font {
     font-family: 'Bungee', cursive;

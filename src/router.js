@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import Store from './store.js'
-import Intro from '@/components/scenes/Intro.vue'
+import Game from '@/components/scenes/Game.vue'
 import Start from '@/components/scenes/Start.vue'
 import Host from '@/components/scenes/Host.vue'
 import Join from '@/components/scenes/Join.vue'
@@ -36,8 +36,8 @@ const router = new Router({
     },
     {
       path: '/game',
-      name: 'Intro',
-      component: Intro,
+      name: 'Game',
+      component: Game,
       meta: {
         game: true
       }

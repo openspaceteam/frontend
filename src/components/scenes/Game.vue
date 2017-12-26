@@ -1,16 +1,19 @@
 <template>
   <div id="intro" class="space-font">
-    <div class="top">
+    <div class="top" :class="{ large: !inGame, small: inGame }">
       <ship></ship>
-      <span class="outline">Settore 1</span>
+      <span class="outline" v-if="printingWelcome">Settore 1</span>
     </div>
     <div class="bottom" v-if="printingWelcome">
       <welcome-text @completed="printingWelcome = false"></welcome-text>
-      <icon class="fast-forward" @click='printingWelcome = false' name="forward" scale="2"></icon>
+      <icon class="fast-forward" @click.native='printingWelcome = false' name="forward" scale="2"></icon>
     </div>
-    <div class="bottom loading" v-if="!printingWelcome">
+    <div class="bottom loading" v-else-if="!printingWelcome && !inGame">
       <div><icon class="loading-icon" name="circle-o-notch" scale="3" spin></icon></div>
       <div class="space-font-mono"><span>Connessione in corso</span></div>
+    </div>
+    <div class="bottom" v-else-if="inGame && !printingWelcome">
+      <instructions></instructions>
     </div>
   </div>
 </template>
@@ -18,19 +21,26 @@
 <script>
   import Ship from '@/components/objects/Ship.vue'
   import WelcomeText from '@/components/objects/WelcomeText.vue'
+  import Instructions from '@/components/objects/Instructions.vue'
 
   export default {
     data () {
       return {
-        printingWelcome: true
+        printingWelcome: true,
+        inGame: false
       }
     },
     components: {
       Ship,
-      WelcomeText
+      WelcomeText,
+      Instructions
     },
     mounted () {
       this.playBgm('static/music/ship_engine.mp3')
+      setTimeout(() => {
+        this.printingWelcome = false
+        this.inGame = true
+      }, 5000)
     }
   }
 </script>
@@ -41,14 +51,25 @@
     position: relative;
     overflow: hidden;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
   }
 
   #intro>.top {
-    height: 200px;
     color: white;
     position: relative;
     background: url('../../assets/darkPurple.png') 0 0 repeat;
     animation: move-intro-top-background 200s linear infinite;
+    transition: 0.5s ease-in-out;
+    transition-property: height;
+  }
+
+  #intro>.top.large {
+    height: 200px;
+  }
+
+  #intro>.top.small {
+    height: 150px;
   }
 
   @keyframes move-intro-top-background {
@@ -66,9 +87,11 @@
 
   #intro>.bottom {
     width: 100%;
-    height: calc(100% - 200px);
+    height: 100%;
     background-color: black;
     color: white;
+    display: flex;
+    flex-direction: column;
   }
 
   .bottom.loading>div>.loading-icon {

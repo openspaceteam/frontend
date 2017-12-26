@@ -16,6 +16,7 @@ import Store from './store.js'
 import Bus from './bus.js'
 import AudioMixin from './audio.js'
 import Config from './config.js'
+import VueCircleSlider from 'vue-circle-slider'
 
 // Global components registration
 Vue.component('icon', Icon)
@@ -23,6 +24,7 @@ Vue.component('push-button', PushButton)
 
 // TODO: Remove
 Vue.use(Element)
+Vue.use(VueCircleSlider)
 
 // Global prototypes registration
 Vue.prototype.$store = Store
