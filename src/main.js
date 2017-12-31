@@ -75,6 +75,9 @@ new Vue({
         this.$store.commit('inGame', true)
         this.$router.push('/lobby/' + data.game_id)
       })
+      this.$io.on('grid', (data) => {
+        this.$store.commit('gameGrid', data)
+      })
       this.$io.on('*', (eventData) => {
         // Emit all unbound events to the global event bus
         // as #event_name, so components can listen to them

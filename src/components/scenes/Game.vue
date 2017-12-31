@@ -13,7 +13,7 @@
       <div class="space-font-mono"><span>Connessione in corso</span></div>
     </div>
     <div class="bottom" v-else-if="inGame && !printingWelcome">
-      <instructions></instructions>
+      <game-field></game-field>
     </div>
   </div>
 </template>
@@ -21,7 +21,7 @@
 <script>
   import Ship from '@/components/objects/Ship.vue'
   import WelcomeText from '@/components/objects/WelcomeText.vue'
-  import Instructions from '@/components/objects/Instructions.vue'
+  import GameField from '@/components/objects/GameField.vue'
 
   export default {
     data () {
@@ -33,7 +33,7 @@
     components: {
       Ship,
       WelcomeText,
-      Instructions
+      GameField
     },
     mounted () {
       this.playBgm('static/music/ship_engine.mp3')

@@ -6,57 +6,61 @@
     <div class="progress">
       <div ref="progress" class="progress-bar"></div>
     </div>
-    <div id="grid">
-      <div class="cell">
-        <span>Triangolo di Monstrata</span>
-        <push-button empty class="red"></push-button>
-      </div>
-      <div class="cell" style="grid-row: 2/ 4;"> 
-        <span>Memini divertenti</span>
-        <div>
-          <push-button narrow class="red">Fai</push-button>
-          <push-button narrow class="red">Colora</push-button>
-          <push-button narrow class="red">Pubblica</push-button>
+    <div id="grid" v-if="grid !== null">
+      <div class="cell"
+      v-for="command in grid"
+      :style="{
+        'grid-row': gridRow(command),
+        'grid-column': gridColumn(command)
+      }">
+        <span>{{ command.name }}</span>
+        <push-button
+          v-if="command.type === 'button'"
+          @click="sendCommand(command)"
+          empty class="red"
+        ></push-button>
+        <switches
+          v-else-if="command.type === 'switch'"
+          @input="sendCommand(command, { toggled: mem })"
+          v-model="mem"
+          :type-bold="true"
+          :emit-on-mount="false"
+          color="blue"
+          theme="custom"
+        ></switches>
+        <div v-else-if="command.type === 'actions'">
+          <push-button v-for="action in command.actions" narrow class="red" @click="sendCommand(command, { action })">{{ action }}</push-button>
         </div>
-      </div>
-      <div class="cell" style="grid-column: 2/4;">
-        <span>Becco wowo</span>
-        <vue-slider :width="280" :dotSize="20" :min="0" :max="4" :speed="0.3" :lazy="true" tooltip="hover" :piecewise="true"></vue-slider>
-      </div>
-      <div class="cell" style="grid-column: 4; grid-row: 1/3;">
-        <span>Volume Airpodzi</span>
-        <vue-slider :height="200" :width="4" :dotSize="20" :min="0" :max="4" :speed="0.3" :lazy="true" tooltip="hover" :piecewise="true" direction="vertical"></vue-slider>
-      </div>
-      <div class="cell" style="grid-column: 2/4; grid-row: 2/4;">
-        <span>Meme grosso</span>
+        <vue-slider
+          v-else-if="command.type === 'slider'"
+          @callback="sendCommand(command, { value: $event })"
+          v-model="memon"
+          :width="(command.w > command.h) ? 280 : 12"
+          :height="(command.w > command.h) ? 12 : 200"
+          :direction="(command.w > command.h) ? 'horizontal' : 'vertical'"
+          :min="command.min"
+          :max="command.max"
+          :dotSize="20"
+          :speed="0.3"
+          :lazy="true"
+          tooltip="hover"
+          :piecewise="true"
+        ></vue-slider>
         <circle-slider
-            :circle-width="20"
-            :progress-width="10"
-            :knob-radius="10"
-            :min="0"
-            :max="10"
-            :side="150"
-          ></circle-slider>
-      </div>
-      <div class="cell" style="grid-column: 2/5; grid-row: 4;">
-        <span>FIFIFI</span>
-        <div style="display: flex;">
-          <push-button narrow class="red">0</push-button>
-          <push-button narrow class="red">1</push-button>
-          <push-button narrow class="red">2</push-button>
+          v-else-if="command.type === 'circular_slider'"
+          @mouseup.native.prevent="sendCommand(command, { value: memon2 })"
+          @mouseleave.native.prevent="sendCommand(command, { value: memon2 })"
+          v-model="memon2"
+          :circle-width="20"
+          :progress-width="10"
+          :knob-radius="10"
+          :min="command.min"
+          :max="command.max"
+          :side="150"
+        ></circle-slider>
+        <div v-else-if="command.type === 'buttons_slider'" style="display: flex;">
+          <push-button v-for="n in command.max" narrow class="red" @click="sendCommand(command, { value: n })">{{ n }}</push-button>
         </div>
-      </div>
-      <div class="cell" style="grid-column: 4; grid-row: 3;">
-        <span>Porta aperta per Ascanio</span>
-        <switches :type-bold="true" v-model="mem" color="blue" theme="custom"></switches>
-      </div>
-      <div class="cell" style="grid-column: 1; grid-row: 4;">
-        <span>Livello di memaggine</span>
-        <circle-slider
-            :circle-width="10"
-            :progress-width="5"
-            :knob-radius="10"
-          ></circle-slider>
       </div>
     </div>
   </div>
@@ -65,6 +69,7 @@
 <script>
   import vueSlider from 'vue-slider-component'
   import Switches from 'vue-switches'
+  import _ from 'underscore'
 
   export default {
     data () {
@@ -75,7 +80,9 @@
           intervalTime: 25
         },
 
-        mem: false
+        mem: false,
+        memon: 0,
+        memon2: 0
       }
     },
     mounted () {
@@ -105,6 +112,41 @@
           this.$refs.progress.style.width = p + '%'
           this.$refs.progress.style.backgroundColor = c
         }
+      },
+      gridColumn (command) {
+        let value = command.x + 1
+        if (command.w > 0) {
+          value += '/' + (command.x + 1 + command.w)
+        }
+        return value
+      },
+      gridRow (command) {
+        let value = command.y + 1
+        if (command.h > 0) {
+          value += '/' + (command.y + 1 + command.h)
+        }
+        return value
+      },
+      sendCommand (command, data) {
+        let stuff = {
+          command: command.name,
+        }
+        if (data !== undefined) {
+          stuff.data = data
+        }
+        console.log('sendign this to server')
+        console.log(stuff)
+      },
+      // sendCommandDebounced: _.debounce(function (command, data) {
+      //   // Debounced sendCommand is used on circular slider, because
+      //   // the component only emits events when changing, even if
+      //   // the mouse button is pressed, resulting in spamming events the server
+      //   this.sendCommand(command, data)
+      // }, 300)
+    },
+    computed : {
+      grid () {
+        return this.$store.getters.gameGrid
       }
     },
     components: {

@@ -15,6 +15,7 @@
     "screenfull": "^3.3.2",
     "socket.io-client": "^2.0.4",
     "socketio-wildcard": "^2.0.0",
+    "underscore": "^1.8.3",
     "vue": "^2.5.2",
     "vue-awesome": "^2.3.4",
     "vue-circle-slider": "^1.0.0",

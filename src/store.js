@@ -12,7 +12,8 @@ export default new Vuex.Store({
       connecting: true
     },
     uid: -1,
-    inGame: false
+    inGame: false,
+    gameGrid: null
   },
   getters: {
     menuMusicInitialized (state) {
@@ -32,6 +33,9 @@ export default new Vuex.Store({
     },
     inGame (state) {
       return state.inGame
+    },
+    gameGrid (state) {
+      return state.gameGrid
     }
   },
   mutations: {
@@ -50,6 +54,9 @@ export default new Vuex.Store({
     },
     inGame (state, newInGameStatus) {
       state.inGame = newInGameStatus
+    },
+    gameGrid (state, gameGrid) {
+      state.gameGrid = gameGrid
     }
   }
 })
