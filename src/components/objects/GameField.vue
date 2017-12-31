@@ -21,8 +21,8 @@
         ></push-button>
         <switches
           v-else-if="command.type === 'switch'"
-          @input="sendCommand(command, { toggled: mem })"
-          v-model="mem"
+          @input="sendCommand(command, { toggled: status[command.name] })"
+          v-model="status[command.name]"
           :type-bold="true"
           :emit-on-mount="false"
           color="blue"
@@ -34,7 +34,7 @@
         <vue-slider
           v-else-if="command.type === 'slider'"
           @callback="sendCommand(command, { value: $event })"
-          v-model="memon"
+          v-model="status[command.name]"
           :width="(command.w > command.h) ? 280 : 12"
           :height="(command.w > command.h) ? 12 : 200"
           :direction="(command.w > command.h) ? 'horizontal' : 'vertical'"
@@ -48,9 +48,9 @@
         ></vue-slider>
         <circle-slider
           v-else-if="command.type === 'circular_slider'"
-          @mouseup.native.prevent="sendCommand(command, { value: memon2 })"
-          @mouseleave.native.prevent="sendCommand(command, { value: memon2 })"
-          v-model="memon2"
+          @mouseup.native.prevent="sendCommand(command, { value: status[command.name] })"
+          @mouseleave.native.prevent="sendCommand(command, { value: status[command.name] })"
+          v-model="status[command.name]"
           :circle-width="20"
           :progress-width="10"
           :knob-radius="10"
@@ -69,7 +69,7 @@
 <script>
   import vueSlider from 'vue-slider-component'
   import Switches from 'vue-switches'
-  import _ from 'underscore'
+  // import _ from 'underscore'
 
   export default {
     data () {
@@ -79,15 +79,20 @@
           progress: 100,
           intervalTime: 25
         },
-
-        mem: false,
-        memon: 0,
-        memon2: 0
+        status: {}
       }
     },
+    props: ['grid'],
     mounted () {
       this.updateProgressBar()
       setInterval(this.updateProgressBar, this.progressBar.intervalTime)
+
+      // Set initial status for switches/slider/etc
+      this.grid.forEach((el) => {
+        if (['switch', 'buttons_slider', 'slider', 'circular_slider'].indexOf(el.status) > -1) {
+          this.status[el.name] = 0
+        }
+      })
     },
     methods: {
       updateProgressBar () {
@@ -137,17 +142,13 @@
         console.log('sendign this to server')
         console.log(stuff)
       },
+      // TODO: Reimplement this?
       // sendCommandDebounced: _.debounce(function (command, data) {
       //   // Debounced sendCommand is used on circular slider, because
       //   // the component only emits events when changing, even if
       //   // the mouse button is pressed, resulting in spamming events the server
       //   this.sendCommand(command, data)
       // }, 300)
-    },
-    computed : {
-      grid () {
-        return this.$store.getters.gameGrid
-      }
     },
     components: {
       vueSlider,

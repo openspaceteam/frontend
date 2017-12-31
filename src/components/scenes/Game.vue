@@ -5,15 +5,15 @@
       <span class="outline" v-if="printingWelcome">Settore 1</span>
     </div>
     <div class="bottom" v-if="printingWelcome">
-      <welcome-text @completed="printingWelcome = false"></welcome-text>
-      <icon class="fast-forward" @click.native='printingWelcome = false' name="forward" scale="2"></icon>
+      <welcome-text @completed="introDone()"></welcome-text>
+      <icon class="fast-forward" @click.native='introDone()' name="forward" scale="2"></icon>
     </div>
     <div class="bottom loading" v-else-if="!printingWelcome && !inGame">
       <div><icon class="loading-icon" name="circle-o-notch" scale="3" spin></icon></div>
-      <div class="space-font-mono"><span>Connessione in corso</span></div>
+      <div class="space-font-mono"><span>In attesa degli altri giocatori...</span></div>
     </div>
     <div class="bottom" v-else-if="inGame && !printingWelcome">
-      <game-field></game-field>
+      <game-field :grid="gameGrid"></game-field>
     </div>
   </div>
 </template>
@@ -27,7 +27,8 @@
     data () {
       return {
         printingWelcome: true,
-        inGame: false
+        inGame: false,
+        gameGrid: null
       }
     },
     components: {
@@ -37,10 +38,25 @@
     },
     mounted () {
       this.playBgm('static/music/ship_engine.mp3')
-      setTimeout(() => {
+      this.$bus.$on('#grid', (data) => {
+        console.log('all intro done ack received')
         this.printingWelcome = false
         this.inGame = true
-      }, 5000)
+        this.gameGrid = data
+      })
+      // setTimeout(() => {
+        // this.printingWelcome = false
+        // this.inGame = true
+      // }, 5000)
+    },
+    destroyed () {
+      this.$io.off('grid')
+    },
+    methods: {
+      introDone () {
+        this.printingWelcome = false
+        this.$io.emit('intro_done')
+      }
     }
   }
 </script>
