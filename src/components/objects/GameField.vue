@@ -1,5 +1,6 @@
 <template>
   <div id="game-bottom-container">
+    <div id="alarm-light" v-if="false"></div>
     <div id="instruction" class="space-font-mono">
       {{ instruction.text }}
     </div>
@@ -8,10 +9,11 @@
     </div>
     <div id="grid" v-if="grid !== null">
       <div class="cell"
-      v-for="command in grid"
+      v-for="(command, index) in grid"
       :style="{
         'grid-row': gridRow(command),
-        'grid-column': gridColumn(command)
+        'grid-column': gridColumn(command),
+        'animation-delay': (index * 0.1) + 's'
       }">
         <span>{{ command.name }}</span>
         <push-button
@@ -45,6 +47,7 @@
           :lazy="true"
           tooltip="hover"
           :piecewise="true"
+          ref="sliders"
         ></vue-slider>
         <circle-slider
           v-else-if="command.type === 'circular_slider'"
@@ -83,6 +86,11 @@
         instruction: {
           text: '',
           time: 10
+        },
+
+        introSounds: {
+          intervalID: null,
+          iteration: 1
         }
       }
     },
@@ -110,11 +118,37 @@
         this.instruction.time = data.time
         this.progressBar.progress = 100
       })
+
+
+      // Refresh all sliders when start animation end
+      setTimeout(() => {
+        this.$nextTick(() => {
+          if (this.$refs === undefined) {
+            console.warn('$refs.slider is undefined')
+            return
+          }
+          this.$refs.sliders.forEach((el) => {
+            el.refresh()
+          })
+        })
+      }, (0.1 * this.grid.length + 0.2) * 1000)
+
+      this.playSound('sounds/wosh.mp3')
+      this.introSounds.intervalID = setInterval(() => {
+        this.playSound('sounds/wosh.mp3')
+        this.introSounds.iteration++
+        if (this.introSounds.iteration === this.grid.length) {
+          clearInterval(this.introSounds.intervalID)
+        }
+      }, 100)
     },
     destroyed () {
       this.$bus.$off('#command')
-      if (this.interval !== null) {
+      if (this.progressBar.intervalID !== null) {
         clearInterval(this.progressBar.intervalID)
+      }
+      if (this.introSounds.intervalID !== null) {
+        clearInterval(this.introSounds.intervalID)
       }
     },
     methods: {
@@ -233,7 +267,16 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+
+    transform: scale(0);
+    animation: cell-intro 0.2s forwards ease-out;
   }
+
+  @keyframes cell-intro {
+    from { transform: scale(0) }
+    to { transform: scale(1) }
+  }
+
 
   #grid>.cell>span {
     text-align: center;
@@ -241,6 +284,25 @@
     margin: 0 auto;
     display: block;
     margin-bottom: 8px;
+  }
+
+  #alarm-light {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    width: 100%;
+    height: 100%;
+    background-color: red;
+    opacity: .3;
+    animation: alarm-light-pulse 1.15s infinite ease-in-out both;
+    pointer-events: none;
+  }
+
+  @keyframes alarm-light-pulse {
+    from { opacity: 0 }
+    50% { opacity: 0.3 }
+    to { opacity: 0 }
   }
 
 
@@ -257,5 +319,6 @@
   .vue-switcher-theme--custom.vue-switcher-color--blue.vue-switcher--unchecked div:after {
     background-color: #3333ff;
   }
+  
 
 </style>
