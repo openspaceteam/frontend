@@ -1,7 +1,7 @@
 <template>
   <div id="game-bottom-container">
     <div id="instruction" class="space-font-mono">
-      Accendere triangolo di Monstrata
+      {{ instruction.text }}
     </div>
     <div class="progress">
       <div ref="progress" class="progress-bar"></div>
@@ -21,7 +21,7 @@
         ></push-button>
         <switches
           v-else-if="command.type === 'switch'"
-          @input="sendCommand(command, { toggled: status[command.name] })"
+          @input="sendCommand(command, status[command.name])"
           v-model="status[command.name]"
           :type-bold="true"
           :emit-on-mount="false"
@@ -29,11 +29,11 @@
           theme="custom"
         ></switches>
         <div v-else-if="command.type === 'actions'">
-          <push-button v-for="action in command.actions" narrow class="red" @click="sendCommand(command, { action })">{{ action }}</push-button>
+          <push-button v-for="action in command.actions" narrow class="red" @click="sendCommand(command, action)">{{ action }}</push-button>
         </div>
         <vue-slider
           v-else-if="command.type === 'slider'"
-          @callback="sendCommand(command, { value: $event })"
+          @callback="sendCommand(command, $event)"
           v-model="status[command.name]"
           :width="(command.w > command.h) ? 280 : 12"
           :height="(command.w > command.h) ? 12 : 200"
@@ -48,8 +48,8 @@
         ></vue-slider>
         <circle-slider
           v-else-if="command.type === 'circular_slider'"
-          @mouseup.native.prevent="sendCommand(command, { value: status[command.name] })"
-          @mouseleave.native.prevent="sendCommand(command, { value: status[command.name] })"
+          @mouseup.native.prevent="sendCommand(command, status[command.name])"
+          @mouseleave.native.prevent="sendCommand(command, status[command.name])"
           v-model="status[command.name]"
           :circle-width="20"
           :progress-width="10"
@@ -59,7 +59,7 @@
           :side="150"
         ></circle-slider>
         <div v-else-if="command.type === 'buttons_slider'" style="display: flex;">
-          <push-button v-for="n in command.max" narrow class="red" @click="sendCommand(command, { value: n })">{{ n }}</push-button>
+          <push-button v-for="n in command.max + 1" narrow :class="{ green: status[command.name] === n, red: status[command.name] !== n }" @click="setCircularSlider(command, n); sendCommand(command, n - 1)">{{ n - 1 }}</push-button>
         </div>
       </div>
     </div>
@@ -74,18 +74,22 @@
   export default {
     data () {
       return {
-        commandTime: 10,
         progressBar: {
           progress: 100,
-          intervalTime: 25
+          intervalTime: 25,
+          intervalID: null
         },
-        status: {}
+        status: {},
+        instruction: {
+          text: '',
+          time: 10
+        }
       }
     },
     props: ['grid'],
     mounted () {
       this.updateProgressBar()
-      setInterval(this.updateProgressBar, this.progressBar.intervalTime)
+      this.intervalID = setInterval(this.updateProgressBar, this.progressBar.intervalTime)
 
       // Set initial status for switches/slider/etc
       this.grid.forEach((el) => {
@@ -93,12 +97,31 @@
           this.status[el.name] = 0
         }
       })
+
+      this.$bus.$on('#command', (data) => {
+        if (data.hasOwnProperty('expired') && data.expired !== null) {
+          if (data.expired) {
+            this.playSound('sounds/error.wav')
+          } else {
+            this.playSound('sounds/ok.mp3')
+          }
+        }
+        this.instruction.text = data.text
+        this.instruction.time = data.time
+        this.progressBar.progress = 100
+      })
+    },
+    destroyed () {
+      this.$bus.$off('#command')
+      if (this.interval !== null) {
+        clearInterval(this.progressBar.intervalID)
+      }
     },
     methods: {
       updateProgressBar () {
-        this.progressBar.progress -= (100 * this.progressBar.intervalTime) / (this.commandTime * 1000)
-        if (this.progressBar.progress <= 0) {
-          this.progressBar.progress = 100
+        this.progressBar.progress -= (100 * this.progressBar.intervalTime) / (this.instruction.time * 1000)
+        if (this.progressBar.progress < 0) {
+          this.progressBar.progress = 0
         }
         if (this.$refs.progress !== undefined) {
           let p = this.progressBar.progress
@@ -132,15 +155,14 @@
         }
         return value
       },
-      sendCommand (command, data) {
-        let stuff = {
-          command: command.name,
+      sendCommand (command, value) {
+        let commandData = {
+          name: command.name,
         }
-        if (data !== undefined) {
-          stuff.data = data
+        if (value !== undefined) {
+          commandData.value = value
         }
-        console.log('sendign this to server')
-        console.log(stuff)
+        this.$io.emit('command', commandData)
       },
       // TODO: Reimplement this?
       // sendCommandDebounced: _.debounce(function (command, data) {
@@ -149,6 +171,9 @@
       //   // the mouse button is pressed, resulting in spamming events the server
       //   this.sendCommand(command, data)
       // }, 300)
+      setCircularSlider (command, n) {
+        this.$set(this.status, command.name, n)
+      }
     },
     components: {
       vueSlider,
