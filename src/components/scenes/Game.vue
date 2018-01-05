@@ -1,61 +1,133 @@
 <template>
   <div id="intro" class="space-font">
     <div class="top" :class="{ large: !inGame, small: inGame }">
-      <ship></ship>
-      <span class="outline" v-if="printingWelcome">Settore 1</span>
+      <death-barrier :position='deathBarrierPosition'></death-barrier>
+      <ship v-if="showShip" :left="shipLeft" :transitionSpeed="outroAnimation ? 4 : levelTransition ? 0 : 1"></ship>
+      <transition name="v-fade">
+        <span class="outline" v-if="printingWelcome || levelTransition">Settore {{ level }}</span>
+      </transition>
+
+      <transition name="v-fade">
+        <span class="outline" v-if="outroAnimation">Iperspazio!</span>
+      </transition>
     </div>
     <div class="bottom" v-if="printingWelcome">
       <welcome-text @completed="introDone()"></welcome-text>
       <icon class="fast-forward" @click.native='introDone()' name="forward" scale="2"></icon>
     </div>
-    <div class="bottom loading" v-else-if="!printingWelcome && !inGame">
+    <div class="bottom loading" v-else-if="waitingPlayers">
       <div><icon class="loading-icon" name="circle-o-notch" scale="3" spin></icon></div>
       <div class="space-font-mono"><span>In attesa degli altri giocatori...</span></div>
     </div>
-    <div class="bottom" v-else-if="inGame && !printingWelcome">
-      <game-field :grid="gameGrid"></game-field>
+    <div class="bottom" v-else-if="inGame || outroAnimation">
+      <transition name="v-fade">
+        <game-field :grid="gameGrid" :levelCompleted="!inGame" @outroAnimationDone="outroAnimationDone()"></game-field>
+      </transition>
+    </div>
+    <div class="bottom" v-else-if="levelTransition">
+      <transition name="v-fade">
+        <div>COL BECCO WOOWOWOWOW</div>
+      </transition>
     </div>
   </div>
 </template>
 
 <script>
   import Ship from '@/components/objects/Ship.vue'
+  import DeathBarrier from '@/components/objects/DeathBarrier.vue'
   import WelcomeText from '@/components/objects/WelcomeText.vue'
   import GameField from '@/components/objects/GameField.vue'
+  import { PRINTING_WELCOME, WAITING_PLAYERS, IN_GAME, LEVEL_TRANSITION, OUTRO_ANIMATION } from '@/gameStatuses.js'
 
   export default {
     data () {
       return {
-        printingWelcome: true,
-        inGame: false,
-        gameGrid: null
+        gameGrid: null,
+
+        status: PRINTING_WELCOME,
+
+        healthInfo: {
+          health: 50,
+          deathLimit: 0
+        },
+
+        showShip: true,
+        level: 1
       }
     },
     components: {
       Ship,
       WelcomeText,
-      GameField
+      GameField,
+      DeathBarrier
     },
     mounted () {
       this.playBgm('static/music/ship_engine.mp3')
+
       this.$bus.$on('#grid', (data) => {
         console.log('all intro done ack received')
-        this.printingWelcome = false
-        this.inGame = true
+        this.status = IN_GAME
         this.gameGrid = data
       })
-      // setTimeout(() => {
-        // this.printingWelcome = false
-        // this.inGame = true
-      // }, 5000)
+
+      this.$bus.$on('#health_info', (data) => {
+        this.$set(this.healthInfo, 'health', data.health)
+        this.$set(this.healthInfo, 'deathLimit', data.death_limit)
+      })
+
+      this.$bus.$on('#next_level', (data) => {
+        this.status = OUTRO_ANIMATION
+        this.level = data.level
+        setTimeout(() => {
+          // Reposition ship right before fader gets removed
+          this.showShip = false;
+          this.$nextTick(() => {
+            this.showShip = true;
+          })
+        }, 4499)
+      })
     },
     destroyed () {
-      this.$io.off('grid')
+      this.$bus.$off('#grid')
+      this.$bus.$off('#health_info')
     },
     methods: {
       introDone () {
-        this.printingWelcome = false
+        this.status = WAITING_PLAYERS
         this.$io.emit('intro_done')
+      },
+      outroAnimationDone () {
+        this.status = LEVEL_TRANSITION
+      }
+    },
+    computed: {
+      shipLeft () {
+        if (this.status == IN_GAME) {
+          return (this.healthInfo.health - 15) + '%'
+        } else if (this.status == OUTRO_ANIMATION) {
+          return '150%'
+        } else {
+          return '0'
+        }
+      },
+      deathBarrierPosition () {
+        return (this.status == IN_GAME) ? (this.healthInfo.deathLimit) : '-50%'
+      },
+      // We can't use constants in templates :(
+      inGame () {
+        return this.status == IN_GAME
+      },
+      levelTransition () {
+        return this.status == LEVEL_TRANSITION
+      },
+      waitingPlayers () {
+        return this.status == WAITING_PLAYERS
+      },
+      printingWelcome () {
+        return this.status == PRINTING_WELCOME
+      },
+      outroAnimation () {
+        return this.status == OUTRO_ANIMATION
       }
     }
   }
@@ -99,6 +171,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 180%;
+    z-index: 10001;  /* above fader */
   }
 
   #intro>.bottom {

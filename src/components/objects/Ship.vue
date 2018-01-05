@@ -1,12 +1,22 @@
 <template>
-  <div class="ship">
+  <div class="ship" :style="{ left, transition: 'left ' + transitionSpeed + 's' }">
     <img src="../../assets/ship-fire.png" class="fire">
     <img src="../../assets/ship.png" class="body">
   </div>
 </template>
 
 <script>
-  export default {}
+  export default {
+    props: {
+      left: {
+        required: true
+      },
+      transitionSpeed: {
+        required: false,
+        default: 1
+      }
+    }
+  }
 </script>
 
 <style>

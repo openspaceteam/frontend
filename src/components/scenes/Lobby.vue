@@ -286,15 +286,4 @@ export default {
   #lobby>#exit {
     margin-top: 30px;
   }
-
-  .fader {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: white;
-    z-index: 10000;
-    animation: fade-in 2.2s;
-  }
 </style>

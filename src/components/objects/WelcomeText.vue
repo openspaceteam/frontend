@@ -45,10 +45,10 @@
       VueTyper
     },
     mounted () {
-      let ac = this.$store.getters.audioContext
-      let morse = new MorseNode(ac, 35, 0.01)
-      morse.connect(ac.destination)
-      morse.playString(ac.currentTime, 'Il pane sas è molto digeribile i memi colorati con le zampe d avanti col becco woowoo')
+      // let ac = this.$store.getters.audioContext
+      // let morse = new MorseNode(ac, 35, 0.01)
+      // morse.connect(ac.destination)
+      // morse.playString(ac.currentTime, 'Il pane sas è molto digeribile i memi colorati con le zampe d avanti col becco woowoo')
     }
   }
 </script>

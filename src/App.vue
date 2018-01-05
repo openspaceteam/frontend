@@ -202,6 +202,25 @@
     content: "";
   }
 
+  .fader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    z-index: 10000;
+    animation: fade-in forwards;
+    animation-duration:  2.2s;
+  }
+
+  .v-fade-enter-active, .v-fade-leave-active {
+    transition: opacity .5s;
+  }
+  .v-fade-enter, .v-fade-leave-to {
+    opacity: 0;
+  }
+
   @keyframes fade-in {
     from { opacity: 0; }
     to { opacity: 1; }

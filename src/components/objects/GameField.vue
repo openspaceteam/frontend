@@ -1,19 +1,23 @@
 <template>
   <div id="game-bottom-container">
+    <div class="fader" v-show="outroAnimation" style="animation-duration: 1.5s"></div>
     <div id="alarm-light" v-if="false"></div>
     <div id="instruction" class="space-font-mono">
       {{ instruction.text }}
     </div>
-    <div class="progress">
+    <div class="progress" v-if="!outroAnimation">
       <div ref="progress" class="progress-bar"></div>
     </div>
     <div id="grid" v-if="grid !== null">
       <div class="cell"
       v-for="(command, index) in grid"
+      v-if="!nullCellAnimation"
       :style="{
         'grid-row': gridRow(command),
         'grid-column': gridColumn(command),
-        'animation-delay': (index * 0.1) + 's'
+        'animation-delay': (index * 0.1) + 's',
+        'transform': 'scale(' + (outroAnimation ? '1' : '0') + ')',
+        'animation': '0.2s ease-out ' + (index * 0.1) + 's 1 ' + (outroAnimation ? 'reverse' : 'normal') + ' forwards running cell-intro'  // vue.js animations would have been much better...
       }">
         <span>{{ command.name }}</span>
         <push-button
@@ -88,13 +92,23 @@
           time: 10
         },
 
-        introSounds: {
+        introOutroSounds: {
           intervalID: null,
           iteration: 1
-        }
+        },
+        outroAnimation: false,         // wether we should use intro or outro animations
+        nullCellAnimation: false       // used to retrigger cell intro-outro animations (should have really used vue animations, sigh)
       }
     },
-    props: ['grid'],
+    props: {
+      grid: {
+        required: true
+      },
+      levelCompleted: {
+        required: false,
+        default: false
+      }
+    },
     mounted () {
       this.updateProgressBar()
       this.intervalID = setInterval(this.updateProgressBar, this.progressBar.intervalTime)
@@ -123,7 +137,7 @@
       // Refresh all sliders when start animation end
       setTimeout(() => {
         this.$nextTick(() => {
-          if (this.$refs === undefined) {
+          if (this.$refs.sliders === undefined) {
             console.warn('$refs.slider is undefined')
             return
           }
@@ -133,22 +147,15 @@
         })
       }, (0.1 * this.grid.length + 0.2) * 1000)
 
-      this.playSound('sounds/wosh.mp3')
-      this.introSounds.intervalID = setInterval(() => {
-        this.playSound('sounds/wosh.mp3')
-        this.introSounds.iteration++
-        if (this.introSounds.iteration === this.grid.length) {
-          clearInterval(this.introSounds.intervalID)
-        }
-      }, 100)
+      this.playIntroOutroSounds()
     },
     destroyed () {
       this.$bus.$off('#command')
       if (this.progressBar.intervalID !== null) {
         clearInterval(this.progressBar.intervalID)
       }
-      if (this.introSounds.intervalID !== null) {
-        clearInterval(this.introSounds.intervalID)
+      if (this.introOutroSounds.intervalID !== null) {
+        clearInterval(this.introOutroSounds.intervalID)
       }
     },
     methods: {
@@ -207,6 +214,32 @@
       // }, 300)
       setCircularSlider (command, n) {
         this.$set(this.status, command.name, n)
+      },
+      playIntroOutroSounds(outro) {
+        let soundPath = (outro !== undefined && !outro) ? 'wosh-out' : 'wosh'
+        this.playSound('sounds/' + soundPath + '.mp3')
+          this.introOutroSounds.intervalID = setInterval(() => {
+            this.playSound('sounds/' + soundPath + '.mp3')
+            this.introOutroSounds.iteration++
+            if (this.introOutroSounds.iteration === this.grid.length) {
+              this.introOutroSounds.iteration = 0
+              clearInterval(this.introOutroSounds.intervalID)
+            }
+          }, 100)
+      }
+    },
+    watch: {
+      levelCompleted () {
+        this.nullCellAnimation = true
+        this.outroAnimation = true
+        this.$nextTick(() => {
+          this.nullCellAnimation = false
+          this.playIntroOutroSounds(true)
+          this.playSound('sounds/transition' + (Math.floor(Math.random() * 3) + 1) + '.mp3')
+          setTimeout(() => {
+            this.$emit('outroAnimationDone')
+          }, 4500)
+        })
       }
     },
     components: {
@@ -267,9 +300,6 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-
-    transform: scale(0);
-    animation: cell-intro 0.2s forwards ease-out;
   }
 
   @keyframes cell-intro {
