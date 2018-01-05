@@ -1,7 +1,6 @@
 <template>
   <div id="game-bottom-container">
     <div class="fader" v-show="outroAnimation" style="animation-duration: 1.5s"></div>
-    <div id="alarm-light" v-if="false"></div>
     <div id="instruction" class="space-font-mono">
       {{ instruction.text }}
     </div>

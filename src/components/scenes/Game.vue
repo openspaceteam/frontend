@@ -21,6 +21,10 @@
     </div>
     <div class="bottom" v-else-if="inGame || outroAnimation">
       <transition name="v-fade">
+        <div id="alarm-light" v-if="showAlarm"></div>
+      </transition>
+      <transition name="v-fade">
+        <!-- TODO: Move fader here as well, out of game-fields -->
         <game-field :grid="gameGrid" :levelCompleted="!inGame" @outroAnimationDone="outroAnimationDone()"></game-field>
       </transition>
     </div>
@@ -52,6 +56,7 @@
         },
 
         showShip: true,
+        showAlarm: false,
         level: 1
       }
     },
@@ -73,11 +78,20 @@
       this.$bus.$on('#health_info', (data) => {
         this.$set(this.healthInfo, 'health', data.health)
         this.$set(this.healthInfo, 'deathLimit', data.death_limit)
+
+        // Alarm check
+        if (this.healthInfo.health <= (this.healthInfo.deathLimit + 7)) {
+          this.showAlarm = true
+          this.playSound('sounds/alarm.mp3', true)
+        } else if (this.showAlarm) {
+          this.showAlarm = false
+          this.stopSound('sounds/alarm.mp3', 1500)
+        }
       })
 
       this.$bus.$on('#next_level', (data) => {
         this.status = OUTRO_ANIMATION
-        this.level = data.level
+        this.level = data.level + 1
         setTimeout(() => {
           // Reposition ship right before fader gets removed
           this.showShip = false;
