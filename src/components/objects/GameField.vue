@@ -7,7 +7,7 @@
     <div class="progress" v-if="!outroAnimation">
       <div ref="progress" class="progress-bar"></div>
     </div>
-    <div id="grid" v-if="grid !== null">
+    <div id="grid" v-if="grid !== null" :style="{ transform: 'scaleX(' + this.gridScaleX + ')' }">
       <div class="cell"
       v-for="(command, index) in grid"
       v-if="!nullCellAnimation"
@@ -16,7 +16,7 @@
         'grid-column': gridColumn(command),
         'animation-delay': (index * 0.1) + 's',
         'transform': 'scale(' + (outroAnimation ? '1' : '0') + ')',
-        'animation': '0.2s ease-out ' + (index * 0.1) + 's 1 ' + (outroAnimation ? 'reverse' : 'normal') + ' forwards running cell-intro'  // vue.js animations would have been much better...
+        'animation': '0.2s ease-out ' + (index * 0.1) + 's 1 ' + (outroAnimation ? 'reverse' : 'normal') + ' forwards running cell-intro',  // vue.js animations would have been much better...
       }">
         <span>{{ command.name }}</span>
         <push-button
@@ -125,7 +125,9 @@
           iteration: 1
         },
         outroAnimation: false,         // wether we should use intro or outro animations
-        nullCellAnimation: false       // used to retrigger cell intro-outro animations (should have really used vue animations, sigh)
+        nullCellAnimation: false,      // used to retrigger cell intro-outro animations (should have really used vue animations, sigh)
+
+        gridScaleX: 1
       }
     },
     props: {
@@ -161,18 +163,18 @@
         this.progressBar.progress = 100
       })
 
+      this.$bus.$on('#flip_grid', () => {
+        this.gridScaleX *= -1
+        this.playSound('sounds/wobble.mp3')
+        setTimeout(() => {
+          this.refreshSliders()
+        }, 550)
+      })
+
 
       // Refresh all sliders when start animation end
       setTimeout(() => {
-        this.$nextTick(() => {
-          if (this.$refs.sliders === undefined) {
-            console.warn('$refs.slider is undefined')
-            return
-          }
-          this.$refs.sliders.forEach((el) => {
-            el.refresh()
-          })
-        })
+        this.refreshSliders()
       }, (0.1 * this.grid.length + 0.2) * 1000)
 
       this.playIntroOutroSounds()
@@ -253,6 +255,17 @@
               clearInterval(this.introOutroSounds.intervalID)
             }
           }, 100)
+      },
+      refreshSliders() {
+        this.$nextTick(() => {
+          if (this.$refs.sliders === undefined) {
+            console.warn('$refs.slider is undefined')
+            return
+          }
+          this.$refs.sliders.forEach((el) => {
+            el.refresh()
+          })
+        })
       }
     },
     watch: {
@@ -322,6 +335,8 @@
     grid-template-rows: repeat(4, 1fr);
     grid-gap: 10px;
     padding: 10px;
+
+    transition: transform 0.8s;
   }
 
   #grid>.cell {

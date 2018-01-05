@@ -237,5 +237,9 @@
     }
   }
 
+  .vue-typer .custom.char.typed {
+    color: white;
+  }
+
 
 </style>

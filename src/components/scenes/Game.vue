@@ -4,7 +4,7 @@
       <death-barrier :position='deathBarrierPosition'></death-barrier>
       <ship v-if="showShip" :left="shipLeft" :transitionSpeed="outroAnimation ? 4 : levelTransition ? 0 : 1"></ship>
       <transition name="v-fade">
-        <span class="outline" v-if="printingWelcome || levelTransition">Settore {{ level }}</span>
+        <span class="outline" v-if="printingWelcome || levelTransition">Settore {{ levelInfo.level }}</span>
       </transition>
 
       <transition name="v-fade">
@@ -29,9 +29,7 @@
       </transition>
     </div>
     <div class="bottom" v-else-if="levelTransition">
-      <transition name="v-fade">
-        <div>COL BECCO WOOWOWOWOW</div>
-      </transition>
+      <level-intro :text="levelInfo.modifierText" :alert="levelInfo.modifier !== null"></level-intro>
     </div>
   </div>
 </template>
@@ -41,6 +39,7 @@
   import DeathBarrier from '@/components/objects/DeathBarrier.vue'
   import WelcomeText from '@/components/objects/WelcomeText.vue'
   import GameField from '@/components/objects/GameField.vue'
+  import LevelIntro from '@/components/objects/LevelIntro.vue'
   import { PRINTING_WELCOME, WAITING_PLAYERS, IN_GAME, LEVEL_TRANSITION, OUTRO_ANIMATION } from '@/gameStatuses.js'
 
   export default {
@@ -57,14 +56,20 @@
 
         showShip: true,
         showAlarm: false,
-        level: 1
+
+        levelInfo: {
+          level: 1,
+          modifier: null,
+          modifierText: ''
+        }
       }
     },
     components: {
       Ship,
       WelcomeText,
       GameField,
-      DeathBarrier
+      DeathBarrier,
+      LevelIntro
     },
     mounted () {
       // this.playBgm('static/music/ship_engine.mp3')
@@ -89,8 +94,22 @@
       })
 
       this.$bus.$on('#next_level', (data) => {
+        // Change game status
         this.status = OUTRO_ANIMATION
-        this.level = data.level + 1
+      
+        // Set level and modifier
+        this.levelInfo.level = data.level + 1
+        if (data.hasOwnProperty('modifier')) {
+          this.levelInfo.modifier = data.modifier
+        } else {
+          this.levelInfo.modifier = null
+        }
+        this.levelInfo.modifierText = data.text
+
+        // Reset health and death barrier
+        this.healthInfo.health = 50
+        this.healthInfo.deathLimit = 0
+
         setTimeout(() => {
           // Reposition ship right before fader gets removed
           this.showShip = false
@@ -103,6 +122,7 @@
     destroyed () {
       this.$bus.$off('#grid')
       this.$bus.$off('#health_info')
+      this.$bus.$off('#next_level')
     },
     methods: {
       introDone () {
@@ -111,6 +131,9 @@
       },
       outroAnimationDone () {
         this.status = LEVEL_TRANSITION
+        setTimeout(() => {
+          this.introDone()
+        }, 5000)
       }
     },
     computed: {

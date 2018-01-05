@@ -58,14 +58,14 @@
     text-align: center;
   }
 
-  .text {
+  #welcome-text>.text {
     padding-top: 10px;
     font-size: 120%;
     text-align: center;
     margin: 0 auto;
   }
 
-  .alert-icon {
+  #welcome-text>.alert-icon {
     padding-top: 25px;
     text-align: center;
     margin: 0 auto;
@@ -73,12 +73,8 @@
     color: #FCBF49;
   }
 
-  .vue-typer .custom.char.typed {
-    color: white;
-  }
-
   @media screen and (max-width: 800px) {
-    .text {
+    #welcome-text>.text {
       font-size: 75%;
     }
   }
