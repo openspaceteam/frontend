@@ -67,7 +67,7 @@
       DeathBarrier
     },
     mounted () {
-      this.playBgm('static/music/ship_engine.mp3')
+      // this.playBgm('static/music/ship_engine.mp3')
 
       this.$bus.$on('#grid', (data) => {
         console.log('all intro done ack received')
@@ -77,7 +77,6 @@
 
       this.$bus.$on('#health_info', (data) => {
         this.$set(this.healthInfo, 'health', data.health)
-        this.$set(this.healthInfo, 'deathLimit', data.death_limit)
 
         // Alarm check
         if (this.healthInfo.health <= (this.healthInfo.deathLimit + 7)) {
@@ -94,9 +93,9 @@
         this.level = data.level + 1
         setTimeout(() => {
           // Reposition ship right before fader gets removed
-          this.showShip = false;
+          this.showShip = false
           this.$nextTick(() => {
-            this.showShip = true;
+            this.showShip = true
           })
         }, 4499)
       })
@@ -116,32 +115,32 @@
     },
     computed: {
       shipLeft () {
-        if (this.status == IN_GAME) {
+        if (this.status === IN_GAME) {
           return (this.healthInfo.health - 15) + '%'
-        } else if (this.status == OUTRO_ANIMATION) {
+        } else if (this.status === OUTRO_ANIMATION) {
           return '150%'
         } else {
           return '0'
         }
       },
       deathBarrierPosition () {
-        return (this.status == IN_GAME) ? (this.healthInfo.deathLimit) : '-50%'
+        return (this.status === IN_GAME) ? (this.healthInfo.deathLimit) : '-50%'
       },
       // We can't use constants in templates :(
       inGame () {
-        return this.status == IN_GAME
+        return this.status === IN_GAME
       },
       levelTransition () {
-        return this.status == LEVEL_TRANSITION
+        return this.status === LEVEL_TRANSITION
       },
       waitingPlayers () {
-        return this.status == WAITING_PLAYERS
+        return this.status === WAITING_PLAYERS
       },
       printingWelcome () {
-        return this.status == PRINTING_WELCOME
+        return this.status === PRINTING_WELCOME
       },
       outroAnimation () {
-        return this.status == OUTRO_ANIMATION
+        return this.status === OUTRO_ANIMATION
       }
     }
   }

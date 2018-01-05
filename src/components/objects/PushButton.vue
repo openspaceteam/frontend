@@ -16,12 +16,12 @@
     methods: {
       mouseDown () {
         if (!this.disabled) {
-          this.playSound('sounds/button_down.mp3')
+          this.playSound(this.downSound)
         }
       },
       mouseUp () {
         if (!this.disabled) {
-          this.playSound('sounds/button_up.mp3')
+          this.playSound(this.upSound)
         }
       },
       click () {
@@ -70,6 +70,16 @@
         type: Boolean,
         required: false,
         default: false
+      },
+      downSound: {
+        type: String,
+        required: false,
+        default: 'sounds/button_down.mp3'
+      },
+      upSound: {
+        type: String,
+        required: false,
+        default: 'sounds/button_up.mp3'
       }
     },
     computed: {

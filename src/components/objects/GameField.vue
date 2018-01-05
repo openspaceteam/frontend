@@ -23,10 +23,12 @@
           v-if="command.type === 'button'"
           @click="sendCommand(command)"
           empty class="red"
+          downSound='sounds/button2_down.mp3'
+          upSound='sounds/button2_up.mp3'
         ></push-button>
         <switches
           v-else-if="command.type === 'switch'"
-          @input="sendCommand(command, status[command.name])"
+          @input="playSound('sounds/switch_' + (status[command.name] ? 'on' : 'off') + '.mp3'); sendCommand(command, status[command.name])"
           v-model="status[command.name]"
           :type-bold="true"
           :emit-on-mount="false"
@@ -34,11 +36,20 @@
           theme="custom"
         ></switches>
         <div v-else-if="command.type === 'actions'">
-          <push-button v-for="action in command.actions" narrow class="red" @click="sendCommand(command, action)">{{ action }}</push-button>
+          <push-button
+            v-for="action in command.actions"
+            narrow
+            class="red"
+            @click="sendCommand(command, action)"
+            downSound='sounds/button3_down.mp3'
+            upSound='sounds/button3_up.mp3'
+          >{{ action }}</push-button>
         </div>
         <vue-slider
           v-else-if="command.type === 'slider'"
-          @callback="sendCommand(command, $event)"
+          @drag-start="playSound('sounds/tick.mp3')"
+          @drag-end="playSound('sounds/tick.mp3'); sendCommand(command, status[command.name])"
+          @callback="playSound('sounds/tick.mp3')"
           v-model="status[command.name]"
           :width="(command.w > command.h) ? 280 : 12"
           :height="(command.w > command.h) ? 12 : 200"
@@ -47,25 +58,43 @@
           :max="command.max"
           :dotSize="20"
           :speed="0.3"
-          :lazy="true"
-          tooltip="hover"
+          tooltip="never"
           :piecewise="true"
+          :piecewiseLabel="true"
           ref="sliders"
+          :labelActiveStyle='{
+            "color": "#3498db"
+          }'
+          :labelStyle='{
+            "color": "#4f5254"
+          }'
         ></vue-slider>
         <circle-slider
           v-else-if="command.type === 'circular_slider'"
-          @mouseup.native.prevent="sendCommand(command, status[command.name])"
-          @mouseleave.native.prevent="sendCommand(command, status[command.name])"
+          @input="playSound('sounds/tick2_' + (Math.floor(Math.random() * 3)) + '.mp3'); sendCommandDebounced(command, Math.floor(status[command.name] / 10))"
           v-model="status[command.name]"
           :circle-width="20"
           :progress-width="10"
           :knob-radius="10"
           :min="command.min"
-          :max="command.max"
+          :max="command.max * 10"
           :side="150"
         ></circle-slider>
         <div v-else-if="command.type === 'buttons_slider'" style="display: flex;">
-          <push-button v-for="n in command.max + 1" narrow :class="{ green: status[command.name] === n, red: status[command.name] !== n }" @click="setCircularSlider(command, n); sendCommand(command, n - 1)">{{ n - 1 }}</push-button>
+          <push-button
+            v-for="n in command.max + 1"
+            narrow
+            :class="{ green: status[command.name] === n, red: status[command.name] !== n }"
+            @click="setButtonsSlider(command, n); sendCommand(command, n - 1)"
+            downSound='sounds/button2_down.mp3'
+            upSound='sounds/button2_up.mp3'
+            >
+              {{ n - 1 }}
+            </push-button>
+        </div>
+
+        <div class="circular-slider-label" v-if="command.type === 'circular_slider'">
+          {{ Math.floor(status[command.name] / 10) }}
         </div>
       </div>
     </div>
@@ -75,7 +104,7 @@
 <script>
   import vueSlider from 'vue-slider-component'
   import Switches from 'vue-switches'
-  // import _ from 'underscore'
+  import _ from 'underscore'
 
   export default {
     data () {
@@ -204,14 +233,13 @@
         }
         this.$io.emit('command', commandData)
       },
-      // TODO: Reimplement this?
-      // sendCommandDebounced: _.debounce(function (command, data) {
-      //   // Debounced sendCommand is used on circular slider, because
-      //   // the component only emits events when changing, even if
-      //   // the mouse button is pressed, resulting in spamming events the server
-      //   this.sendCommand(command, data)
-      // }, 300)
-      setCircularSlider (command, n) {
+      sendCommandDebounced: _.debounce(function (command, data) {
+        // Debounced sendCommand is used on circular slider, because
+        // the component only emits events when changing, even if
+        // the mouse button is pressed, resulting in spamming events the server
+        this.sendCommand(command, data)
+      }, 300),
+      setButtonsSlider (command, n) {
         this.$set(this.status, command.name, n)
       },
       playIntroOutroSounds(outro) {
@@ -239,7 +267,14 @@
             this.$emit('outroAnimationDone')
           }, 4500)
         })
-      }
+      },
+      // status: {
+      //   handler () {
+      //     console.log('beccowowo')
+      //     this.playSound('sounds/tick.mp3')
+      //   },
+      //   deep: true
+      // }
     },
     components: {
       vueSlider,
@@ -347,6 +382,16 @@
   }
   .vue-switcher-theme--custom.vue-switcher-color--blue.vue-switcher--unchecked div:after {
     background-color: #3333ff;
+  }
+
+  .circular-slider-label {
+    margin-top: 10px;
+    border: 1px solid white;
+    width: 50px;
+    padding: 2px;
+    text-align: center;
+    border-radius: 8px;
+    background-color: #0f101c;
   }
   
 
