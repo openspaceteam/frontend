@@ -32,7 +32,7 @@
           v-model="status[command.name]"
           :type-bold="true"
           :emit-on-mount="false"
-          color="blue"
+          color="normal"
           theme="custom"
         ></switches>
         <div v-else-if="command.type === 'actions'">
@@ -63,10 +63,16 @@
           :piecewiseLabel="true"
           ref="sliders"
           :labelActiveStyle='{
-            "color": "#3498db"
+            "color": "#02bd7d"
           }'
           :labelStyle='{
-            "color": "#4f5254"
+            "color": "#34485f"
+          }'
+          :bgStyle='{
+            "backgroundColor": "#34485f",
+          }'
+          :processStyle='{
+            "backgroundColor": "#02bd7d"
           }'
         ></vue-slider>
         <circle-slider
@@ -75,7 +81,7 @@
           v-model="status[command.name]"
           :circle-width="20"
           :progress-width="10"
-          :knob-radius="10"
+          :knob-radius="8"
           :min="command.min"
           :max="command.max * 10"
           :side="150"
@@ -386,18 +392,21 @@
   }
 
 
+  .vue-switcher {
+    margin-top: 10px;
+  }
 
-  .vue-switcher-theme--custom.vue-switcher-color--blue div {
-    background-color: #3333ff;
+  .vue-switcher-theme--custom.vue-switcher-color--normal div {
+    background-color: #02bd7d;
   }
-  .vue-switcher-theme--custom.vue-switcher-color--blue div:after {
-    background-color: #0000e6;
+  .vue-switcher-theme--custom.vue-switcher-color--normal div:after {
+    background-color: #176348;
   }
-  .vue-switcher-theme--custom.vue-switcher-color--blue.vue-switcher--unchecked div {
-    background-color: #9999ff;
+  .vue-switcher-theme--custom.vue-switcher-color--normal.vue-switcher--unchecked div {
+    background-color: #ff9595;
   }
-  .vue-switcher-theme--custom.vue-switcher-color--blue.vue-switcher--unchecked div:after {
-    background-color: #3333ff;
+  .vue-switcher-theme--custom.vue-switcher-color--normal.vue-switcher--unchecked div:after {
+    background-color: #631717;
   }
 
   .circular-slider-label {
@@ -418,7 +427,10 @@
     #instruction {
       padding: 20px 0 20px 0;
     }
-  }
-  
+
+    .progress-bar {
+      height: 10px;
+    }
+  } 
 
 </style>
