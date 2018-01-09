@@ -1,14 +1,16 @@
 <template>
   <div id="start" class="full-size both-centered">
-    <div id="title" class="space-font pacchiano">
-      Spaceteam
-    </div>
-    <div class="actions separated-container">
-      <div id="subtitle" class="space-font-mono">
-        Simulatore collaborativo di disastri spaziali
+    <div style="width: 100%;">
+      <div id="title" class="space-font pacchiano">
+        Spaceteam
       </div>
-      <push-button @click="$router.push('/host')" class="space-font-mono" big :disabled="!connected">Ospita</push-button>
-      <push-button @click="joinLobby()" class="space-font-mono" big :disabled="!connected">Unisciti</push-button>
+      <div class="actions separated-container">
+        <div id="subtitle" class="space-font-mono">
+          Simulatore collaborativo di disastri spaziali
+        </div>
+        <push-button @click="$router.push('/host')" class="space-font-mono" big :disabled="!connected">Ospita</push-button>
+        <push-button @click="joinLobby()" class="space-font-mono" big :disabled="!connected">Unisciti</push-button>
+      </div>
     </div>
     <icon @click.native="toggleMusic()" class="mute-icon" :name="playingMusic ? 'volume-down' : 'volume-off'" scale="3"></icon>
     <div id="footer" class="space-font-mono">
@@ -62,12 +64,14 @@
 <style>
   #start {
     color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   #title {
-    height: 100px;
-    margin-top: 200px;
     animation: title-animation 10s ease-in-out alternate infinite;
+    height: 100px;
   }
 
   @keyframes title-animation {
