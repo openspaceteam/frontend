@@ -95,6 +95,7 @@
             @click="setButtonsSlider(command, n); sendCommand(command, n - 1)"
             downSound='sounds/button2_down.mp3'
             upSound='sounds/button2_up.mp3'
+            :grid="true"
             >
               {{ n - 1 }}
             </push-button>
@@ -419,6 +420,7 @@
     border-radius: 8px;
     background-color: #0f101c;
     color: #02bd7d;
+    line-height: 1;
   }
 
   .command-name {
@@ -432,6 +434,11 @@
 
     .progress-bar {
       height: 10px;
+    }
+
+    .circular-slider-label {
+      padding: 7px;
+      width: auto;
     }
   } 
 
