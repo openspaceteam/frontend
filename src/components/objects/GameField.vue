@@ -417,6 +417,7 @@
     text-align: center;
     border-radius: 8px;
     background-color: #0f101c;
+    color: #02bd7d;
   }
 
   .command-name {

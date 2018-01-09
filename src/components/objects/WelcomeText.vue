@@ -22,21 +22,17 @@
     data () {
       return {
         welcomeText: [
-          'SITUAZIONE CRITICA!\n\n' +
-          'La navicella non risponde ai comandi.\n' +
-          'La situazione potrebbe peggiorare.\n' +
-          'Possibili conseguenze catastrofiche.\n' +
-          'Tentare di riprendere il controllo ad ogni costo.',
-
-          'A TUTTO L\'EQUIPAGGIO\n' +
+          'SITUAZIONE CRITICA!\n' +
           'ATTENERSI AL SEGUENTE PROTOCOLLO:\n\n' +
-          '+ Richiesta massima collaborazione;\n' +
           '+ Ogni giocatore possiede dei comandi diversi;\n' +
-          '+ Ad ogni giocatore è assegnato un comando;\n' +
-          '+ Comunicare il comando ad alta voce;\n' +
-          '+ Il proprietario del comando è pregato di eseguirlo;\n' +
-          '+ Eseguire i comandi entro il tempo limite;\n' +
-          '\n\n' +
+          '+ Ad ogni giocatore è assegnato un\'istruzione;\n' +
+          '+ Comunicare l\'istruzione ad alta voce;\n' +
+          '+ Chi possiede il comando relativo ad un\'istruzione è pregato di eseguirla;\n' +
+          '+ Eseguire le istruzioni entro il tempo limite;\n',
+
+          'La collaborazione è fondamentale\n' +
+          'Ricordati di lavorare come una squadra\n' +
+          'Come un vero Spaceteam.\n\n' +
           'Buon divertimento!'
         ]
       }
