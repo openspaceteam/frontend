@@ -2,74 +2,76 @@
   <div>
     <div class="fader" v-if="inIntro"></div>
     <div id="lobby" class="menu-pane separated-container">
-    <h1 class="space-font pacchiano">Lobby</h1>
-    <div>
-      <div class="separated-container slot" v-for="(slot, index) in slots" :class="{ green: slot !== null && slot.ready }">
+      <div>
+        <h1 class="space-font pacchiano">Lobby</h1>
         <div>
-          <push-button small fitted v-if="imHost() && isOccupied(slot) && !isHost(slot)">
-            <icon name="ban"></icon>
+          <div class="separated-container slot" v-for="(slot, index) in slots" :class="{ green: slot !== null && slot.ready }">
+            <div>
+              <push-button small fitted v-if="imHost() && isOccupied(slot) && !isHost(slot)">
+                <icon name="ban"></icon>
+              </push-button>
+            </div>
+            <div :class="{ empty: !isOccupied(slot), host: isHost(slot), player: !isHost(slot) }">
+              <div class="name">
+                <span>
+                  <icon :name="slot.host ? 'bolt' : 'gamepad'" v-if="isOccupied(slot)"></icon>
+                  <icon name="spinner" pulse v-else></icon>
+                </span>
+                <span v-if="isOccupied(slot)">
+                  Giocatore {{ index + 1 }}
+                </span>
+                <span v-else>
+                  In attesa...
+                </span>
+                <span >
+                  <icon v-if="slot !== null" :name="slot.ready ? 'check-circle' : 'times-circle'"></icon>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="players-number" v-if="imHost()" class="lobby-button-container">
+          <push-button fitted  inline @click="changeLobbySize(-1)" :disabled="this.settings.size <= 2" style="float: left;" :class="settingsColourClass">
+            <span><icon name="chevron-left"></icon></span>
+          </push-button>
+          <span :class="settingsColourClass">Numero giocatori: {{ settings.size }}</span>
+          <push-button fitted inline @click="changeLobbySize(+1)" :disabled="this.settings.size >= 4" style="float: right" :class="settingsColourClass">
+            <span><icon name="chevron-right"></icon></span>
           </push-button>
         </div>
-        <div :class="{ empty: !isOccupied(slot), host: isHost(slot), player: !isHost(slot) }">
-          <div class="name">
-            <span>
-              <icon :name="slot.host ? 'bolt' : 'gamepad'" v-if="isOccupied(slot)"></icon>
-              <icon name="spinner" pulse v-else></icon>
-            </span>
-            <span v-if="isOccupied(slot)">
-              Giocatore {{ index + 1 }}
-            </span>
-            <span v-else>
-              In attesa...
-            </span>
-            <span >
-              <icon v-if="slot !== null" :name="slot.ready ? 'check-circle' : 'times-circle'"></icon>
-            </span>
-          </div>
+
+        <div v-if="imHost()" class="lobby-button-container">
+          <push-button @click="changeGameType()" :class="{ green: settings.public, orange: !settings.public }">
+            <span><icon :name="gameTypeIcon"></icon></span>
+            Tipo partita: {{ gameTypeReadable }}
+          </push-button>
+        </div>
+
+        <div v-if="!settings.public" class="lobby-button-container">
+          Condividi questo link con gli altri giocatori per invitarli in questa partita
+          <input class="input-field fluid" type="text" :value="lobbyLink" readonly @focus="$event.target.select()">
+        </div>
+
+        <div class="lobby-button-container">
+          <push-button :class="{ green: !imReady(), orange: imReady() }" @click="toggleReady()" v-if="!gameCanStart() || !imHost()">
+            <icon :name="readyIcon"></icon>
+            {{ readyText }}
+          </push-button>
+          <push-button class="blue bold" v-else-if="imHost() && gameCanStart()" @click="startGame()">
+            <icon name="play"></icon>
+            Inizia partita!
+          </push-button>
+        </div>
+
+        <div id="exit" class="lobby-button-container">
+          <push-button @click="leaveGame()">
+            <icon name="sign-out"></icon>
+            Esci
+          </push-button>
         </div>
       </div>
     </div>
-
-    <div id="players-number" v-if="imHost()">
-      <push-button fitted  inline @click="changeLobbySize(-1)" :disabled="this.settings.size <= 2" style="float: left;" :class="settingsColourClass">
-        <span><icon name="chevron-left"></icon></span>
-      </push-button>
-      <span :class="settingsColourClass">Numero giocatori: {{ settings.size }}</span>
-      <push-button fitted inline @click="changeLobbySize(+1)" :disabled="this.settings.size >= 4" style="float: right" :class="settingsColourClass">
-        <span><icon name="chevron-right"></icon></span>
-      </push-button>
-    </div>
-
-    <div v-if="imHost()">
-      <push-button @click="changeGameType()" :class="{ green: settings.public, orange: !settings.public }">
-        <span><icon :name="gameTypeIcon"></icon></span>
-        Tipo partita: {{ gameTypeReadable }}
-      </push-button>
-    </div>
-
-    <div v-if="!settings.public">
-      Condividi questo link con gli altri giocatori per invitarli in questa partita
-      <input class="input-field fluid" type="text" :value="lobbyLink" readonly @focus="$event.target.select()">
-    </div>
-
-    <div>
-      <push-button :class="{ green: !imReady(), orange: imReady() }" @click="toggleReady()" v-if="!gameCanStart() || !imHost()">
-        <icon :name="readyIcon"></icon>
-        {{ readyText }}
-      </push-button>
-      <push-button class="blue bold" v-else-if="imHost() && gameCanStart()" @click="startGame()">
-        <icon name="play"></icon>
-        Inizia partita!
-      </push-button>
-    </div>
-
-    <div id="exit">
-      <push-button @click="leaveGame()">
-        <icon name="sign-out"></icon>
-        Esci
-      </push-button>
-    </div>
-  </div>
   </div>
 </template>
 
@@ -285,5 +287,9 @@ export default {
 
   #lobby>#exit {
     margin-top: 30px;
+  }
+
+  .lobby-button-container {
+    padding: 8px 0 8px 0;
   }
 </style>

@@ -147,7 +147,6 @@
 
     #title {
       height: 70px;
-      margin-top: 150px;
     }
 
     #subtitle {

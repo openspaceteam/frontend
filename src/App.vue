@@ -182,14 +182,20 @@
 
   .menu-pane {
     color: white;
-    padding-top: 300px;
-    width: 40%;
     height: 100%;
     margin: auto;
     position: absolute;
     top: 0; left: 0; bottom: 0; right: 0;
     text-align: center;
     font-family: 'Space Mono', monospace;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .menu-pane>div:first-child {
+    width: 40%;
   }
 
   .separated-container>* {
@@ -227,8 +233,7 @@
   }
 
   @media screen and (max-width: 800px) {
-    .menu-pane {
-      padding-top: 100px;
+    .menu-pane>div:first-child {
       width: 95%;
     }
 
