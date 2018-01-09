@@ -5,7 +5,7 @@
        @mouseup="mouseUp()"
        @click="click()"
   >
-    <span :class="{ big, small, bold }">
+    <span :class="{ big, small, bold, grid }">
       <slot></slot>
     </span>
   </div>
@@ -62,6 +62,11 @@
         default: false
       },
       inline: {
+        type: Boolean,
+        required: false,
+        default: false
+      },
+      grid: {
         type: Boolean,
         required: false,
         default: false
@@ -268,7 +273,7 @@
       padding: 4px 12px 4px 12px;
     }
 
-    .btn-push>span {
+    .btn-push>span.grid {
       display: grid;
     }
   }

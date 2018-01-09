@@ -43,6 +43,7 @@
             @click="sendCommand(command, action)"
             downSound='sounds/button3_down.mp3'
             upSound='sounds/button3_up.mp3'
+            :grid="true"
           >{{ action }}</push-button>
         </div>
         <vue-slider
