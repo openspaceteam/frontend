@@ -268,4 +268,10 @@
       width: 100%;
     }
   }
+
+  @media screen and (max-width: 1400px) {
+    #intro>.top.small {
+      height: 125px;
+    }
+  }
 </style>

@@ -18,7 +18,7 @@
         'transform': 'scale(' + (outroAnimation ? '1' : '0') + ')',
         'animation': '0.2s ease-out ' + (index * 0.1) + 's 1 ' + (outroAnimation ? 'reverse' : 'normal') + ' forwards running cell-intro',  // vue.js animations would have been much better...
       }">
-        <span>{{ command.name }}</span>
+        <span class="command-name">{{ command.name }}</span>
         <push-button
           v-if="command.type === 'button'"
           @click="sendCommand(command)"
@@ -408,6 +408,16 @@
     text-align: center;
     border-radius: 8px;
     background-color: #0f101c;
+  }
+
+  .command-name {
+    line-height: 1;
+  }
+
+  @media screen and (max-width: 1400px) {
+    #instruction {
+      padding: 20px 0 20px 0;
+    }
   }
   
 

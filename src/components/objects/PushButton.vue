@@ -263,4 +263,10 @@
     }
   }
 
+  @media screen and (max-width: 1400px) {
+    .btn-push.narrow {
+      padding: 2px 6px 2px 6px;
+    }
+  }
+
 </style>
