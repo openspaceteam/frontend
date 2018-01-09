@@ -109,6 +109,7 @@
 
   h1 {
     font-size: 300%;
+    line-height: 1;
   }
 
   input.input-field {
