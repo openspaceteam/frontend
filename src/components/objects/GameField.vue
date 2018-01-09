@@ -363,6 +363,7 @@
     margin: 0 auto;
     display: block;
     margin-bottom: 8px;
+    line-height: 1;
   }
 
   #alarm-light {

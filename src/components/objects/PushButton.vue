@@ -91,6 +91,10 @@
 </script>
 
 <style>
+  .btn-push>span {
+    line-height: 1;
+  }
+
   .btn-push>span.big {
     font-size: 25px;
   }
