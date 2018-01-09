@@ -71,7 +71,9 @@
 
   #title {
     animation: title-animation 10s ease-in-out alternate infinite;
-    height: 100px;
+    min-height: 100px;
+    line-height: 1;
+    font-size: 500%;
   }
 
   @keyframes title-animation {
