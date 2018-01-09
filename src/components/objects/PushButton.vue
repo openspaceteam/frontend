@@ -265,7 +265,11 @@
 
   @media screen and (max-width: 1400px) {
     .btn-push.narrow {
-      padding: 2px 6px 2px 6px;
+      padding: 4px 12px 4px 12px;
+    }
+
+    .btn-push>span {
+      display: grid;
     }
   }
 
