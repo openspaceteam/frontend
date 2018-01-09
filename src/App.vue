@@ -244,6 +244,12 @@
 
   .vue-typer .custom.char.typed {
     color: white;
+    line-height: 1;
+  }
+
+  .vue-typer .custom.caret {
+    width: 10px;
+    background-color: rgb(29, 30, 37);
   }
 
 
