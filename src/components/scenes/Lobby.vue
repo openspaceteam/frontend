@@ -6,11 +6,12 @@
         <h1 class="space-font pacchiano">Lobby</h1>
         <div>
           <div class="separated-container slot" v-for="(slot, index) in slots" :class="{ green: slot !== null && slot.ready }">
-            <div>
+            <!-- I don't have enough time to implement this -->
+            <!-- <div>
               <push-button small fitted v-if="imHost() && isOccupied(slot) && !isHost(slot)">
                 <icon name="ban"></icon>
               </push-button>
-            </div>
+            </div> -->
             <div :class="{ empty: !isOccupied(slot), host: isHost(slot), player: !isHost(slot) }">
               <div class="name">
                 <span>
@@ -234,11 +235,12 @@ export default {
 </script>
 
 <style>
-  .slot>div:first-child {
+  /* kick button, not implemented */
+  /* .slot>div:first-child {
     display: inline-block;
     left: 0;
     position: absolute;
-  }
+  } */
 
   .slot>div:first-child>.btn-push {
     height: 25px;
