@@ -69,7 +69,6 @@
         this.$delete(this.games, data.game_id)
       })
       this.$bus.$on('#connect', () => {
-        console.log('async conn')
         this.joinLobby()
       })
       if (this.$store.getters.isConnected) {

@@ -1,5 +1,5 @@
 <template>
-  <div id="game-bottom-container">
+  <div id="game-bottom-container" @mousemove="asteroid($event)">
     <div class="fader" v-show="outroAnimation" style="animation-duration: 1.5s"></div>
     <div id="instruction" class="space-font-mono">
       {{ instruction.text }}
@@ -78,7 +78,7 @@
         ></vue-slider>
         <circle-slider
           v-else-if="command.type === 'circular_slider'"
-          @input="playSound('sounds/tick2_' + (Math.floor(Math.random() * 3)) + '.mp3'); sendCommandDebounced(command, Math.floor(status[command.name] / 10))"
+          @input="playSound('sounds/tick2_' + (Math.floor(Math.random() * 3)) + '.mp3'); sendCommandThrottled(command, Math.floor(status[command.name] / 10))"
           v-model="status[command.name]"
           :circle-width="20"
           :progress-width="10"
@@ -132,10 +132,14 @@
           intervalID: null,
           iteration: 1
         },
-        outroAnimation: false,         // wether we should use intro or outro animations
-        nullCellAnimation: false,      // used to retrigger cell intro-outro animations (should have really used vue animations, sigh)
+        outroAnimation: false,         // Wether we should use intro or outro animations
+        nullCellAnimation: false,      // Used to retrigger cell intro-outro animations (should have really used vue animations, sigh)
 
-        gridScaleX: 1
+        gridScaleX: 1,
+
+        // Asteroid and black hole
+        oldMouseEvent: null,          // Used to detect mouse speed
+        lastSpacebarPress: 0
       }
     },
     props: {
@@ -179,6 +183,9 @@
         }, 550)
       })
 
+      // Spacebar bind
+      window.addEventListener('keyup', this.onSpacebar)
+
 
       // Refresh all sliders when start animation end
       setTimeout(() => {
@@ -189,6 +196,8 @@
     },
     destroyed () {
       this.$bus.$off('#command')
+      this.$bus.$off('#flip_grid')
+      window.removeEventListener('keyup', this.onSpacebar)
       if (this.progressBar.intervalID !== null) {
         clearInterval(this.progressBar.intervalID)
       }
@@ -197,6 +206,11 @@
       }
     },
     methods: {
+      onSpacebar(event) {
+        if (event.keyCode === 32) {
+          this.blackHole()
+        }
+      },
       updateProgressBar () {
         this.progressBar.progress -= (100 * this.progressBar.intervalTime) / (this.instruction.time * 1000)
         if (this.progressBar.progress < 0) {
@@ -243,12 +257,6 @@
         }
         this.$io.emit('command', commandData)
       },
-      sendCommandDebounced: _.debounce(function (command, data) {
-        // Debounced sendCommand is used on circular slider, because
-        // the component only emits events when changing, even if
-        // the mouse button is pressed, resulting in spamming events the server
-        this.sendCommand(command, data)
-      }, 300),
       setButtonsSlider (command, n) {
         this.$set(this.status, command.name, n)
       },
@@ -274,7 +282,57 @@
             el.refresh()
           })
         })
-      }
+      },
+      asteroid (ev) {
+        ev.time = Date.now();
+        let speed = this.calculateMouseVelocity(ev, this.oldMouseEvent)
+        this.oldMouseEvent = ev
+
+        if (speed >= 5) {
+          this.sendAsteroidDefeatThrottled()
+        }
+      },
+      blackHole () {
+        let now = Date.now()
+        if (now - this.lastSpacebarPress < 250) {
+          this.sendBlackHoleDefeatThrottled()
+        }
+        this.lastSpacebarPress = now
+      },
+      calculateMouseVelocity(ev, oldEv) {
+        let x = ev.clientX, newX, newY, newT, xDist, yDist, interval, velocity, y = ev.clientY, t
+
+        if (oldEv === null) {
+          return 0
+        }
+
+        t = oldEv.time;
+        newX = oldEv.clientX;
+        newY = oldEv.clientY;
+        newT = Date.now();
+        xDist = newX - x;
+        yDist = newY - y;
+        interval = newT - t;
+
+        velocity = Math.sqrt(xDist * xDist + yDist * yDist) / interval;
+        return velocity;
+      },
+      sendBlackHoleDefeatThrottled: _.throttle(function () => {
+        console.log('black hole!')
+        console.log(this)
+        // this.$io.$emit('defeat_black_hole')
+      }, 1500),
+      sendAsteroidDefeatThrottled: _.throttle(function () => {
+        // console.log('asteroid!')
+        // this.$io.$emit('defeat_asteroid')
+      }, 1500),
+      // TODO: Change to throttle
+      sendCommandThrottled: _.debounce(function (command, data) {
+        // Throttled sendCommand is used on circular slider, because
+        // the component only emits events when changing, even if
+        // the mouse button is pressed, resulting in spamming events the server
+        this.sendCommand(command, data)
+      }, 300),
     },
     watch: {
       levelCompleted () {
@@ -291,7 +349,6 @@
       },
       // status: {
       //   handler () {
-      //     console.log('beccowowo')
       //     this.playSound('sounds/tick.mp3')
       //   },
       //   deep: true
@@ -413,12 +470,12 @@
 
   .circular-slider-label {
     margin-top: 10px;
-    border: 1px solid white;
+    background-color: #0a0509;
+    border: 2px solid #171c2c;
     width: 50px;
     padding: 2px;
     text-align: center;
     border-radius: 8px;
-    background-color: #0f101c;
     color: #02bd7d;
     line-height: 1;
   }
