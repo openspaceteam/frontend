@@ -148,7 +148,8 @@
     }
 
     #title {
-      height: 70px;
+      min-height: 70px;
+      font-size: 350%;
     }
 
     #subtitle {
