@@ -317,12 +317,12 @@
         velocity = Math.sqrt(xDist * xDist + yDist * yDist) / interval;
         return velocity;
       },
-      sendBlackHoleDefeatThrottled: _.throttle(function () => {
+      sendBlackHoleDefeatThrottled: _.throttle(function () {
         console.log('black hole!')
         console.log(this)
         // this.$io.$emit('defeat_black_hole')
       }, 1500),
-      sendAsteroidDefeatThrottled: _.throttle(function () => {
+      sendAsteroidDefeatThrottled: _.throttle(function () {
         // console.log('asteroid!')
         // this.$io.$emit('defeat_asteroid')
       }, 1500),
