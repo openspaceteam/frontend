@@ -2,7 +2,7 @@
   <div id="start" class="full-size both-centered">
     <div style="width: 100%;">
       <div id="title" class="space-font pacchiano">
-        Spaceteam
+        Spatial Team
       </div>
       <div class="actions separated-container">
         <div id="subtitle" class="space-font-mono">
