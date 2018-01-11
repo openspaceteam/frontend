@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="lobby-page-container">
     <div class="fader" v-if="inIntro"></div>
     <div id="lobby" class="menu-pane separated-container">
       <div>
@@ -241,6 +241,11 @@ export default {
     left: 0;
     position: absolute;
   } */
+
+  #lobby-page-container {
+    width: 100%;
+    height: 100%;
+  }
 
   .slot>div:first-child>.btn-push {
     height: 25px;
