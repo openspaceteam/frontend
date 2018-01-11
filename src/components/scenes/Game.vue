@@ -23,9 +23,15 @@
       <transition name="v-fade">
         <div id="alarm-light" v-if="showAlarm"></div>
       </transition>
+      <transition name="v-fade-half" @after-enter="showSafe = false">
+        <div id="safe" v-if="showSafe">
+          <div><icon class="icon" name="fire-extinguisher" scale="5"></icon></div>
+          <div>Al sicuro!</div>
+        </div>
+      </transition>
       <transition name="v-fade">
         <!-- TODO: Move fader here as well, out of game-fields -->
-        <game-field :grid="gameGrid" :levelCompleted="!inGame" @outroAnimationDone="outroAnimationDone()"></game-field>
+        <game-field :grid="gameGrid" :levelCompleted="!inGame" @outroAnimationDone="outroAnimationDone()" @safe="safe()"></game-field>
       </transition>
     </div>
     <div class="bottom" v-else-if="levelTransition">
@@ -67,6 +73,7 @@
 
         showShip: true,
         showAlarm: false,
+        showSafe: false,
 
         levelInfo: {
           level: 1,
@@ -156,6 +163,10 @@
       haltGameDisconnect () {
         this.status = DISCONNECTED
         this.playSound('sounds/disconnected.mp3')
+      },
+      safe () {
+        this.showSafe = true
+        this.playSound('sounds/safe.mp3')
       }
     },
     computed: {
@@ -282,6 +293,37 @@
     bottom: 20px;
     opacity: 0.5;
     animation: intro-ff-fade 1s forwards;
+  }
+
+  #alarm-light {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    width: 100%;
+    height: 100%;
+    background-color: red;
+    opacity: .3;
+    animation: alarm-light-pulse 1.15s infinite ease-in-out both;
+    pointer-events: none;
+  }
+
+  #safe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1100;
+    width: 100%;
+    height: 100%;
+    background-color: #23af3a;
+    pointer-events: none;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    font-size: 150%;
   }
 
   @keyframes intro-ff-fade {

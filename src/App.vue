@@ -278,6 +278,23 @@
     opacity: 0;
   }
 
+  .v-fade-half-leave, .v-fade-half-enter-to {
+    opacity: 1;
+  }
+
+  .v-fade-half-leave-to, .v-fade-half-enter {
+    opacity: 0;
+  }
+
+  .v-fade-half-leave-active {
+    transition: opacity 1.5s;
+  }
+
+  /* .v-fade-half-enter-active {
+    transition: opacity .1s;
+  } */
+
+
   @keyframes fade-in {
     from { opacity: 0; }
     to { opacity: 1; }

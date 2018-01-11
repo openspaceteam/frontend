@@ -169,6 +169,10 @@
           } else {
             this.playSound('sounds/ok.mp3')
           }
+
+          if (data.special_defeated) {
+            this.$emit('safe')
+          }
         }
         this.instruction.text = data.text
         this.instruction.time = data.time
@@ -284,11 +288,11 @@
         })
       },
       asteroid (ev) {
-        ev.time = Date.now();
+        ev.time = Date.now()
         let speed = this.calculateMouseVelocity(ev, this.oldMouseEvent)
         this.oldMouseEvent = ev
 
-        if (speed >= 5) {
+        if (speed >= 10) {
           this.sendAsteroidDefeatThrottled()
         }
       },
@@ -306,16 +310,16 @@
           return 0
         }
 
-        t = oldEv.time;
-        newX = oldEv.clientX;
-        newY = oldEv.clientY;
-        newT = Date.now();
-        xDist = newX - x;
-        yDist = newY - y;
-        interval = newT - t;
+        t = oldEv.time
+        newX = oldEv.clientX
+        newY = oldEv.clientY
+        newT = Date.now()
+        xDist = newX - x
+        yDist = newY - y
+        interval = newT - t
 
-        velocity = Math.sqrt(xDist * xDist + yDist * yDist) / interval;
-        return velocity;
+        velocity = Math.sqrt(xDist * xDist + yDist * yDist) / interval
+        return velocity
       },
       sendBlackHoleDefeatThrottled: _.throttle(function () {
         console.log('black hole!')
@@ -428,19 +432,6 @@
     display: block;
     margin-bottom: 8px;
     line-height: 1;
-  }
-
-  #alarm-light {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-    width: 100%;
-    height: 100%;
-    background-color: red;
-    opacity: .3;
-    animation: alarm-light-pulse 1.15s infinite ease-in-out both;
-    pointer-events: none;
   }
 
   @keyframes alarm-light-pulse {
