@@ -33,7 +33,6 @@
     },
     mounted () {
       if (!this.$store.getters.menuMusicInitialized) {
-//        this.playBgm('static/music/menu.wav')
         this.$store.commit('menuMusicInitialized')
       }
     },
@@ -42,7 +41,7 @@
         if (this.isBgmPlaying()) {
           this.stopBgm()
         } else {
-          this.playBgm('static/music/menu.wav')
+          this.playBgm('static/music/menu.mp3')
         }
         this.playingMusic = this.isBgmPlaying()
       },

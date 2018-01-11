@@ -113,11 +113,12 @@ export default {
         }
       })
       if (readyCount >= 2 && allReady && readyCount !== oldReadyCount) {
-        this.playSound('sounds/all_ready.wav')
+        this.playSound('sounds/all_ready.mp3')
       }
     })
     this.$bus.$on('#game_started', (data) => {
       this.inIntro = true
+      this.stopBgm()
       this.playSound('sounds/game_start.mp3')
       setTimeout(() => {
         this.$router.push('/game')

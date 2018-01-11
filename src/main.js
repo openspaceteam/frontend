@@ -71,7 +71,7 @@ new Vue({
         this.$bus.$emit('#disconnect')
       })
       this.$io.on('game_join_success', (data) => {
-        this.playSound('sounds/lobby_join.wav')
+        this.playSound('sounds/lobby_join.mp3')
         this.$store.commit('inGame', true)
         this.$router.push('/lobby/' + data.game_id)
       })

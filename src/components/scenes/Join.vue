@@ -57,7 +57,7 @@
     },
     mounted () {
       this.$bus.$on('#game_join_fail', (data) => {
-        this.playSound('sounds/error.wav')
+        this.playSound('sounds/error.mp3')
         console.error(data.message)
       })
       // game_join_success is globally registered (used it host page as well)

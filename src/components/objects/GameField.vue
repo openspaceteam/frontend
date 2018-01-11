@@ -165,18 +165,18 @@
       this.$bus.$on('#command', (data) => {
         if (data.hasOwnProperty('expired') && data.expired !== null) {
           if (data.expired) {
-            this.playSound('sounds/error.wav')
+            this.playSound('sounds/error.mp3')
           } else {
             this.playSound('sounds/ok.mp3')
-          }
-
-          if (data.special_defeated) {
-            this.$emit('safe')
           }
         }
         this.instruction.text = data.text
         this.instruction.time = data.time
         this.progressBar.progress = 100
+      })
+
+      this.$bus.$on('#safe', () => {
+        this.$emit('safe')
       })
 
       this.$bus.$on('#flip_grid', () => {
@@ -201,6 +201,7 @@
     destroyed () {
       this.$bus.$off('#command')
       this.$bus.$off('#flip_grid')
+      this.$bus.$off('#safe')
       window.removeEventListener('keyup', this.onSpacebar)
       if (this.progressBar.intervalID !== null) {
         clearInterval(this.progressBar.intervalID)
