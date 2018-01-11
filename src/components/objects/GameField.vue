@@ -78,7 +78,7 @@
         ></vue-slider>
         <circle-slider
           v-else-if="command.type === 'circular_slider'"
-          @input="playSound('sounds/tick2_' + (Math.floor(Math.random() * 3)) + '.mp3'); sendCommandThrottled(command, Math.floor(status[command.name] / 10))"
+          @input="playSound('sounds/tick2_' + (Math.floor(Math.random() * 3)) + '.mp3'); sendCommandDebounced(command, Math.floor(status[command.name] / 10))"
           v-model="status[command.name]"
           :circle-width="20"
           :progress-width="10"
@@ -112,7 +112,7 @@
 <script>
   import vueSlider from 'vue-slider-component'
   import Switches from 'vue-switches'
-  import _ from 'underscore'
+  import _ from 'lodash'
 
   export default {
     data () {
@@ -320,15 +320,14 @@
       sendBlackHoleDefeatThrottled: _.throttle(function () {
         console.log('black hole!')
         console.log(this)
-        // this.$io.$emit('defeat_black_hole')
+        this.$io.emit('defeat_black_hole')
       }, 1500),
       sendAsteroidDefeatThrottled: _.throttle(function () {
-        // console.log('asteroid!')
-        // this.$io.$emit('defeat_asteroid')
+        console.log('asteroid!')
+        this.$io.emit('defeat_asteroid')
       }, 1500),
-      // TODO: Change to throttle
-      sendCommandThrottled: _.debounce(function (command, data) {
-        // Throttled sendCommand is used on circular slider, because
+      sendCommandDebounced: _.debounce(function (command, data) {
+        // Debvounced sendCommand is used on circular slider, because
         // the component only emits events when changing, even if
         // the mouse button is pressed, resulting in spamming events the server
         this.sendCommand(command, data)
