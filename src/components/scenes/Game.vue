@@ -1,6 +1,6 @@
 <template>
   <div id="intro" class="space-font">
-    <div class="top" :class="{ large: !inGame, small: inGame }">
+    <div class="top" :class="{ large: !inGame, small: inGame, dark: disconnected }">
       <death-barrier :position='deathBarrierPosition'></death-barrier>
       <ship v-if="showShip" :left="shipLeft" :transitionSpeed="outroAnimation ? 4 : levelTransition ? 0 : 1"></ship>
       <transition name="v-fade">
@@ -15,8 +15,8 @@
       <welcome-text @completed="introDone()"></welcome-text>
       <icon class="fast-forward" @click.native='introDone()' name="forward" scale="2"></icon>
     </div>
-    <div class="bottom loading" v-else-if="waitingPlayers">
-      <div><icon class="loading-icon" name="circle-o-notch" scale="3" spin></icon></div>
+    <div class="bottom centered" v-else-if="waitingPlayers">
+      <div><icon class="icon" name="circle-o-notch" scale="3" spin></icon></div>
       <div class="space-font-mono"><span>In attesa degli altri giocatori...</span></div>
     </div>
     <div class="bottom" v-else-if="inGame || outroAnimation">
@@ -31,6 +31,16 @@
     <div class="bottom" v-else-if="levelTransition">
       <level-intro :text="levelInfo.modifierText" :alert="levelInfo.modifier !== null"></level-intro>
     </div>
+    <div class="bottom centered" v-else-if="disconnected">
+      <div><icon class="icon" name="unlink" scale="3"></icon></div>
+      <div class="space-font-mono"><span>Un giocatore si è disconnesso</span></div>
+      <div class="back-button">
+        <push-button class="orange space-font-mono" narrow @click="goToMenu()">
+          <span><icon name="fire-extinguisher"></icon></span>
+          Torna al menu
+        </push-button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -40,7 +50,8 @@
   import WelcomeText from '@/components/objects/WelcomeText.vue'
   import GameField from '@/components/objects/GameField.vue'
   import LevelIntro from '@/components/objects/LevelIntro.vue'
-  import { PRINTING_WELCOME, WAITING_PLAYERS, IN_GAME, LEVEL_TRANSITION, OUTRO_ANIMATION } from '@/gameStatuses.js'
+  import PushButton from '@/components/objects/PushButton.vue'
+  import { PRINTING_WELCOME, WAITING_PLAYERS, IN_GAME, LEVEL_TRANSITION, OUTRO_ANIMATION, DISCONNECTED } from '@/gameStatuses.js'
 
   export default {
     data () {
@@ -69,7 +80,8 @@
       WelcomeText,
       GameField,
       DeathBarrier,
-      LevelIntro
+      LevelIntro,
+      PushButton
     },
     mounted () {
       // this.playBgm('static/music/ship_engine.mp3')
@@ -118,6 +130,11 @@
           })
         }, 4499)
       })
+
+      this.$bus.$on('#player_disconnected', () => {
+        this.status = DISCONNECTED
+        this.playSound('sounds/disconnected.mp3')
+      })
     },
     destroyed () {
       this.$bus.$off('#grid')
@@ -134,6 +151,9 @@
         setTimeout(() => {
           this.introDone()
         }, 5000)
+      },
+      goToMenu () {
+        window.location.replace('/')
       }
     },
     computed: {
@@ -164,6 +184,9 @@
       },
       outroAnimation () {
         return this.status === OUTRO_ANIMATION
+      },
+      disconnected () {
+        return this.status === DISCONNECTED
       }
     }
   }
@@ -185,7 +208,7 @@
     background: url('../../assets/darkPurple.png') 0 0 repeat;
     animation: move-intro-top-background 200s linear infinite;
     transition: 0.5s ease-in-out;
-    transition-property: height;
+    transition-property: height opacity;
   }
 
   #intro>.top.large {
@@ -194,6 +217,10 @@
 
   #intro>.top.small {
     height: 150px;
+  }
+
+  #intro>.top.dark {
+    opacity: 0.5;
   }
 
   @keyframes move-intro-top-background {
@@ -219,27 +246,32 @@
     flex-direction: column;
   }
 
-  .bottom.loading>div>.loading-icon {
+  .bottom.centered>div>.icon {
     margin: 0 auto;
     display: block;
   }
 
-  .bottom.loading>div {
+  .bottom.centered>div {
     text-align: center;
   }
 
-  .bottom.loading>div:first-child {
+  .bottom.centered>div:first-child {
     padding-top: 25%;
   }
 
-  .bottom.loading>div:nth-child(2) {
+  .bottom.centered>div:nth-child(2) {
     padding-top: 20px;
   }
 
-  .bottom.loading>div:nth-child(2)>span {
+  .bottom.centered>div:nth-child(2)>span {
     margin-top: 20px;
     text-align: center;
     font-size: 120%;
+  }
+
+  .bottom.centered>div:nth-child(3) {
+    margin: 10px auto;
+    width: 25%;
   }
 
   .bottom>.fast-forward {
