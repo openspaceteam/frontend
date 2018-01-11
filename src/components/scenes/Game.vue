@@ -33,7 +33,7 @@
     </div>
     <div class="bottom centered" v-else-if="disconnected">
       <div><icon class="icon" name="unlink" scale="3"></icon></div>
-      <div class="space-font-mono"><span>Un giocatore si è disconnesso</span></div>
+      <div class="space-font-mono"><span>Connessione persa</span></div>
       <div class="back-button">
         <push-button class="orange space-font-mono" narrow @click="goToMenu()">
           <span><icon name="fire-extinguisher"></icon></span>
@@ -131,10 +131,8 @@
         }, 4499)
       })
 
-      this.$bus.$on('#player_disconnected', () => {
-        this.status = DISCONNECTED
-        this.playSound('sounds/disconnected.mp3')
-      })
+      this.$bus.$on('#disconnect', this.haltGameDisconnect)
+      this.$bus.$on('#player_disconnected', this.haltGameDisconnect)
     },
     destroyed () {
       this.$bus.$off('#grid')
@@ -154,6 +152,10 @@
       },
       goToMenu () {
         window.location.replace('/')
+      },
+      haltGameDisconnect () {
+        this.status = DISCONNECTED
+        this.playSound('sounds/disconnected.mp3')
       }
     },
     computed: {

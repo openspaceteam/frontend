@@ -1,6 +1,6 @@
 <template>
   <div id="start" class="full-size both-centered">
-    <div style="width: 100%;">
+    <div class="fluid">
       <div id="title" class="space-font pacchiano">
         Spatial Team
       </div>
