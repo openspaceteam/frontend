@@ -14,7 +14,7 @@
     </div>
     <icon @click.native="toggleMusic()" class="mute-icon" :name="playingMusic ? 'volume-down' : 'volume-off'" scale="3"></icon>
     <div id="footer" class="space-font-mono">
-      <span>v0.1 ~ </span>
+      <span>v1.0 ~ </span>
       <span>Realizzato da Giuseppe Guerra per l'ISIS Di Maggio ~ </span>
       <span>Stato server:</span>
       <icon v-if="connecting" name="spinner" class="connecting" pulse></icon>
