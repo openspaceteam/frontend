@@ -2,14 +2,15 @@
   <div id="level-intro">
     <icon v-if="alert" class="icon alert" name="exclamation-triangle" scale="4"></icon>
     <icon v-else class="icon success" name="check-circle" scale="4"></icon>
-    <div class="text space-font-mono">
-      {{ text }}
+    <div class="text space-font-mono" v-html="unescapeSymbols(text)">
     </div>
   </div>
 </template>
 
 
 <script>
+  import SymbolsMixin from '@/symbols.js'
+
   export default {
     props: {
       text: {
@@ -30,7 +31,8 @@
           this.playSound('sounds/no_modifier.mp3')
         }
       }, 1000)
-    }
+    },
+    mixins: [SymbolsMixin]
   }
 </script>
 

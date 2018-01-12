@@ -76,6 +76,11 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2212, U+2215;
 }
 
+@font-face {
+  font-family: 'Symbols';
+  src: url(./assets/fonts/GlyphyxOneNF.ttf);
+}
+
 /* @import url('https://fonts.googleapis.com/css?family=Bungee');
 @import url('https://fonts.googleapis.com/css?family=Space+Mono'); */
 
@@ -106,6 +111,10 @@
 
   .space-font-mono {
     font-family: 'Space Mono', monospace;
+  }
+
+  .symbols-font {
+    font-family: 'Symbols'
   }
 
   .outline, .pacchiano {

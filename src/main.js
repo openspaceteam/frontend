@@ -2,7 +2,6 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 
-import Element from 'element-ui'  // TODO: Remove
 import io from 'socket.io-client'
 import SocketIOWildcard from 'socketio-wildcard'
 import 'vue-awesome/icons'
@@ -15,24 +14,22 @@ import PushButton from './components/objects/PushButton.vue'
 import Store from './store.js'
 import Bus from './bus.js'
 import AudioMixin from './audio.js'
+import GeneralMixin from './general.js'
 import Config from './config.js'
 import VueCircleSlider from 'vue-circle-slider'
 
 // Global components registration
 Vue.component('icon', Icon)
 Vue.component('push-button', PushButton)
-
-// TODO: Remove
-Vue.use(Element)
 Vue.use(VueCircleSlider)
 
 // Global prototypes registration
 Vue.prototype.$store = Store
 Vue.prototype.$bus = Bus
-// Vue.prototype.$io = null  // we start without a connection
 
 // Global mixins registration
 Vue.mixin(AudioMixin)
+Vue.mixin(GeneralMixin)
 
 // Other options
 Vue.config.productionTip = false

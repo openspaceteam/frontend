@@ -35,7 +35,7 @@
       </transition>
     </div>
     <div class="bottom" v-else-if="levelTransition">
-      <level-intro :text="levelInfo.modifierText" :alert="levelInfo.modifier !== null"></level-intro>
+      <level-intro :text="levelInfo.modifierText" :alert="levelInfo.modifier"></level-intro>
     </div>
     <div class="bottom centered" v-else-if="disconnected">
       <div><icon class="icon" name="unlink" scale="3"></icon></div>

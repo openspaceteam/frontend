@@ -1,8 +1,7 @@
 <template>
   <div id="game-bottom-container" @mousemove="asteroid($event)">
     <div class="fader" v-show="outroAnimation" style="animation-duration: 1.5s"></div>
-    <div id="instruction" class="space-font-mono">
-      {{ instruction.text }}
+    <div id="instruction" class="space-font-mono" v-html="unescapeSymbols(instruction.text)">
     </div>
     <div class="progress" v-if="!outroAnimation">
       <div ref="progress" class="progress-bar"></div>
@@ -18,7 +17,7 @@
         'transform': 'scale(' + (outroAnimation ? '1' : '0') + ')',
         'animation': '0.2s ease-out ' + (index * 0.1) + 's 1 ' + (outroAnimation ? 'reverse' : 'normal') + ' forwards running cell-intro',  // vue.js animations would have been much better...
       }">
-        <span class="command-name">{{ command.name }}</span>
+        <span class="command-name" :class="{ 'symbols-font': command.hasOwnProperty('symbol') }">{{ command.name }}</span>
         <push-button
           v-if="command.type === 'button'"
           @click="sendCommand(command)"
@@ -116,6 +115,7 @@
   import vueSlider from 'vue-slider-component'
   import Switches from 'vue-switches'
   import _ from 'lodash'
+  import SymbolsMixin from '@/symbols.js'
 
   export default {
     data () {
@@ -390,7 +390,8 @@
     components: {
       vueSlider,
       Switches
-    }
+    },
+    mixins: [SymbolsMixin]
   }
 </script>
 
@@ -469,7 +470,6 @@
     50% { opacity: 0.3 }
     to { opacity: 0 }
   }
-sliderCallback
 
   .vue-switcher {
     margin-top: 10px;
@@ -506,6 +506,20 @@ sliderCallback
 
   .command-name {
     line-height: 1;
+  }
+
+  .blurred {
+    color: transparent;
+    text-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px; 
+  }
+
+  .command-name.symbols-font {
+    font-size: 250%; 
+  }
+
+  #instruction>span.symbols-font {
+    font-size: 160%;
+    vertical-align: middle;
   }
 
   @media screen and (max-width: 1400px) {
