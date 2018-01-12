@@ -48,9 +48,8 @@
         </div>
         <vue-slider
           v-else-if="command.type === 'slider'"
-          @drag-start="playSound('sounds/tick.mp3')"
-          @drag-end="playSound('sounds/tick.mp3'); sendCommand(command, status[command.name])"
-          @callback="playSound('sounds/tick.mp3')"
+          @drag-end="sliderDrag(command)"
+          @callback="sliderDrag(command)"
           v-model="status[command.name]"
           :width="(command.w > command.h) ? 280 : 12"
           :height="(command.w > command.h) ? 12 : 200"
@@ -78,7 +77,7 @@
         ></vue-slider>
         <circle-slider
           v-else-if="command.type === 'circular_slider'"
-          @input="playSound('sounds/tick2_' + (Math.floor(Math.random() * 3)) + '.mp3'); sendCommandDebounced(command, Math.floor(status[command.name] / 10))"
+          @input="circularSliderDrag(command)"
           v-model="status[command.name]"
           :circle-width="20"
           :progress-width="10"
@@ -139,7 +138,7 @@
 
         // Asteroid and black hole
         oldMouseEvent: null,          // Used to detect mouse speed
-        lastSpacebarPress: 0
+        lastEnterPress: 0
       }
     },
     props: {
@@ -151,16 +150,17 @@
         default: false
       }
     },
-    mounted () {
-      this.updateProgressBar()
-      this.intervalID = setInterval(this.updateProgressBar, this.progressBar.intervalTime)
-
+    beforeMount() {
       // Set initial status for switches/slider/etc
       this.grid.forEach((el) => {
         if (['switch', 'buttons_slider', 'slider', 'circular_slider'].indexOf(el.status) > -1) {
           this.status[el.name] = 0
         }
       })
+    },
+    mounted () {
+      this.updateProgressBar()
+      this.intervalID = setInterval(this.updateProgressBar, this.progressBar.intervalTime)
 
       this.$bus.$on('#command', (data) => {
         if (data.hasOwnProperty('expired') && data.expired !== null) {
@@ -183,17 +183,20 @@
         this.gridScaleX *= -1
         this.playSound('sounds/wobble.mp3')
         setTimeout(() => {
-          this.refreshSliders()
+          this.$nextTick(() => {
+            this.refreshSliders()
+          })
         }, 550)
       })
 
-      // Spacebar bind
-      window.addEventListener('keyup', this.onSpacebar)
-
+      // Enter bind
+      window.addEventListener('keyup', this.onKeyUp)
 
       // Refresh all sliders when start animation end
       setTimeout(() => {
-        this.refreshSliders()
+        this.$nextTick(() => {
+          this.refreshSliders()
+        })
       }, (0.1 * this.grid.length + 0.2) * 1000)
 
       this.playIntroOutroSounds()
@@ -202,7 +205,7 @@
       this.$bus.$off('#command')
       this.$bus.$off('#flip_grid')
       this.$bus.$off('#safe')
-      window.removeEventListener('keyup', this.onSpacebar)
+      window.removeEventListener('keyup', this.onKeyUp)
       if (this.progressBar.intervalID !== null) {
         clearInterval(this.progressBar.intervalID)
       }
@@ -211,8 +214,8 @@
       }
     },
     methods: {
-      onSpacebar(event) {
-        if (event.keyCode === 32) {
+      onKeyUp(event) {
+        if (event.keyCode === 13) {
           this.blackHole()
         }
       },
@@ -278,14 +281,12 @@
           }, 100)
       },
       refreshSliders() {
-        this.$nextTick(() => {
-          if (this.$refs.sliders === undefined) {
-            console.warn('$refs.slider is undefined')
-            return
-          }
-          this.$refs.sliders.forEach((el) => {
-            el.refresh()
-          })
+        if (this.$refs.sliders === undefined) {
+          console.warn('$refs.slider is undefined')
+          return
+        }
+        this.$refs.sliders.forEach((el) => {
+          el.refresh()
         })
       },
       asteroid (ev) {
@@ -299,10 +300,10 @@
       },
       blackHole () {
         let now = Date.now()
-        if (now - this.lastSpacebarPress < 250) {
+        if (now - this.lastEnterPress < 250) {
           this.sendBlackHoleDefeatThrottled()
         }
-        this.lastSpacebarPress = now
+        this.lastEnterPress = now
       },
       calculateMouseVelocity(ev, oldEv) {
         let x = ev.clientX, newX, newY, newT, xDist, yDist, interval, velocity, y = ev.clientY, t
@@ -331,12 +332,29 @@
         console.log('asteroid!')
         this.$io.emit('defeat_asteroid')
       }, 1500),
-      sendCommandDebounced: _.debounce(function (command, data) {
+      sendCommandDebounced: _.debounce(function (command, preprocessor) {
         // Debvounced sendCommand is used on circular slider, because
         // the component only emits events when changing, even if
         // the mouse button is pressed, resulting in spamming events the server
-        this.sendCommand(command, data)
+
+        // preprocessor is an optional function that can be used to edit the 
+        // value before sending it
+        let valueToSend = this.status[command.name]
+        if (typeof preprocessor === 'function') {
+          valueToSend = preprocessor(valueToSend)
+        }
+        this.sendCommand(command, valueToSend)
       }, 300),
+      sliderDrag(command) {
+        this.playSound('sounds/tick.mp3')
+        this.sendCommandDebounced(command)
+      },
+      circularSliderDrag (command) {
+        this.playSound('sounds/tick2_' + (Math.floor(Math.random() * 3)) + '.mp3')
+        this.sendCommandDebounced(command, (value) => { 
+          return Math.floor(value / 10)
+        })
+      }
     },
     watch: {
       levelCompleted () {
@@ -353,7 +371,7 @@
       },
       // status: {
       //   handler () {
-      //     this.playSound('sounds/tick.mp3')
+      //     console.log('becco wo')
       //   },
       //   deep: true
       // }
@@ -440,7 +458,7 @@
     50% { opacity: 0.3 }
     to { opacity: 0 }
   }
-
+sliderCallback
 
   .vue-switcher {
     margin-top: 10px;
