@@ -1,6 +1,6 @@
 <template>
   <div id="intro" class="space-font">
-    <div class="top" :class="{ large: !inGame, small: inGame, dark: disconnected }">
+    <div class="top" :class="{ large: !inGame, small: inGame, dark: disconnected || gameOver }">
       <death-barrier :position='deathBarrierPosition'></death-barrier>
       <ship v-if="showShip" :left="shipLeft" :transitionSpeed="outroAnimation ? 4 : levelTransition ? 0 : 1"></ship>
       <transition name="v-fade">
@@ -47,6 +47,16 @@
         </push-button>
       </div>
     </div>
+    <div class="bottom centered" v-else-if="gameOver">
+      <div><icon class="icon" name="bomb" scale="3"></icon></div>
+      <div class="space-font-mono"><span>Game over</span></div>
+      <div class="back-button">
+        <push-button class="orange space-font-mono" narrow @click="goToMenu()">
+          <span><icon name="frown-o"></icon></span>
+          Esci
+        </push-button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -57,7 +67,7 @@
   import GameField from '@/components/objects/GameField.vue'
   import LevelIntro from '@/components/objects/LevelIntro.vue'
   import PushButton from '@/components/objects/PushButton.vue'
-  import { PRINTING_WELCOME, WAITING_PLAYERS, IN_GAME, LEVEL_TRANSITION, OUTRO_ANIMATION, DISCONNECTED } from '@/gameStatuses.js'
+  import { PRINTING_WELCOME, WAITING_PLAYERS, IN_GAME, LEVEL_TRANSITION, OUTRO_ANIMATION, DISCONNECTED, GAME_OVER } from '@/gameStatuses.js'
 
   export default {
     data () {
@@ -140,11 +150,17 @@
 
       this.$bus.$on('#disconnect', this.haltGameDisconnect)
       this.$bus.$on('#player_disconnected', this.haltGameDisconnect)
+      this.$bus.$on('#game_over', () => {
+        this.status = GAME_OVER
+        this.stopSound('sounds/alarm.mp3')
+        this.playSound('sounds/gameover.mp3')
+      })
     },
     destroyed () {
       this.$bus.$off('#grid')
       this.$bus.$off('#health_info')
       this.$bus.$off('#next_level')
+      this.$bus.$off('#game_over')
     },
     methods: {
       introDone () {
@@ -200,6 +216,9 @@
       },
       disconnected () {
         return this.status === DISCONNECTED
+      },
+      gameOver () {
+        return this.status === GAME_OVER
       }
     }
   }

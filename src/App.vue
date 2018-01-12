@@ -81,6 +81,11 @@
   src: url(./assets/fonts/GlyphyxOneNF.ttf);
 }
 
+@font-face {
+  font-family: 'Alien';
+  src: url(./assets/fonts/alien.ttf);
+}
+
 /* @import url('https://fonts.googleapis.com/css?family=Bungee');
 @import url('https://fonts.googleapis.com/css?family=Space+Mono'); */
 
@@ -115,6 +120,10 @@
 
   .symbols-font {
     font-family: 'Symbols'
+  }
+
+  .alien-font {
+    font-family: 'Alien'
   }
 
   .outline, .pacchiano {

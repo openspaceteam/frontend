@@ -17,7 +17,7 @@
         'transform': 'scale(' + (outroAnimation ? '1' : '0') + ')',
         'animation': '0.2s ease-out ' + (index * 0.1) + 's 1 ' + (outroAnimation ? 'reverse' : 'normal') + ' forwards running cell-intro',  // vue.js animations would have been much better...
       }">
-        <span class="command-name" :class="{ 'symbols-font': command.hasOwnProperty('symbol') }">{{ command.name }}</span>
+        <span class="command-name" :class="{ 'symbols-font': command.hasOwnProperty('symbol'), 'alien-font': command.hasOwnProperty('alien') }">{{ command.name }}</span>
         <push-button
           v-if="command.type === 'button'"
           @click="sendCommand(command)"
