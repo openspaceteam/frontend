@@ -7,7 +7,7 @@
     <div class="progress" v-if="!outroAnimation">
       <div ref="progress" class="progress-bar"></div>
     </div>
-    <div id="grid" v-if="grid !== null" :style="{ transform: 'scaleX(' + this.gridScaleX + ')' }">
+    <div id="grid" v-if="grid !== null" :style="flipScale">
       <div class="cell"
       v-for="(command, index) in grid"
       v-if="!nullCellAnimation"
@@ -48,6 +48,7 @@
         </div>
         <vue-slider
           v-else-if="command.type === 'slider'"
+          class="slider"
           @drag-end="sliderDrag(command)"
           @callback="sliderDrag(command)"
           v-model="status[command.name]"
@@ -74,9 +75,11 @@
           :processStyle='{
             "backgroundColor": "#02bd7d"
           }'
+          :style="flipScale"
         ></vue-slider>
         <circle-slider
           v-else-if="command.type === 'circular_slider'"
+          class="circular-slider"
           @input="circularSliderDrag(command)"
           v-model="status[command.name]"
           :circle-width="20"
@@ -85,6 +88,7 @@
           :min="command.min"
           :max="command.max * 10"
           :side="150"
+          :style="flipScale"
         ></circle-slider>
         <div v-else-if="command.type === 'buttons_slider'" style="display: flex;">
           <push-button
@@ -376,6 +380,13 @@
       //   deep: true
       // }
     },
+    computed: {
+      flipScale() {
+        return {
+          transform: 'scaleX(' + this.gridScaleX + ')'
+        }
+      }
+    },
     components: {
       vueSlider,
       Switches
@@ -487,6 +498,10 @@ sliderCallback
     border-radius: 8px;
     color: #02bd7d;
     line-height: 1;
+  }
+
+  .circular-slider, .slider {
+    transition: transform 0.8s;
   }
 
   .command-name {
