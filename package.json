@@ -11,9 +11,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
-    "element-ui": "^2.0.8",
     "lodash": "^4.17.4",
-    "screenfull": "^3.3.2",
     "socket.io-client": "^2.0.4",
     "socketio-wildcard": "^2.0.0",
     "vue": "^2.5.2",
