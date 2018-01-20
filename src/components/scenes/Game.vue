@@ -111,6 +111,7 @@
 
       this.$bus.$on('#health_info', (data) => {
         this.$set(this.healthInfo, 'health', data.health)
+        this.$set(this.healthInfo, 'deathLimit', data.death_limit)
 
         // Alarm check
         if (this.healthInfo.health <= (this.healthInfo.deathLimit + 7)) {
