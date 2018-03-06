@@ -2,7 +2,7 @@
   <div id="start" class="full-size both-centered">
     <div class="fluid">
       <div id="title" class="space-font pacchiano">
-        Spatial Team
+        Open Spaceteam
       </div>
       <div class="actions separated-container">
         <div id="subtitle" class="space-font-mono">
