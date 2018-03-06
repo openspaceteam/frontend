@@ -27,7 +27,7 @@ $ npm run build
 ```
 
 ## Configuring nginx
-Use the config file included in the backend.
+[Use the config file included in the backend.](https://github.com/openspaceteam/backend/blob/master/nginx.conf)
 
 ## License
 This project is licensed under the GNU AGPL 3 License.  
