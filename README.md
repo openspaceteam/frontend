@@ -22,12 +22,15 @@ There are few comments and some stuff is a bit hacky on the frontend-side.
 ```
 $ git clone https://github.com/openspaceteam/frontend.git
 $ cd frontend
+$ cp src/config.sample.js config.js
+$ nano src/config.js
+...
 $ npm install
 $ npm run build
 ```
 
-## Configuring nginx
-[Use the config file included in the backend.](https://github.com/openspaceteam/backend/blob/master/nginx.conf)
+## Configuring
+[Here's a sample nginx config in openspaceteam.nginx.conf.](https://github.com/openspaceteam/frontend/blob/master/openspaceteam.nginx.conf).  
 
 ## License
 This project is licensed under the GNU AGPL 3 License.  
