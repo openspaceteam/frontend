@@ -30,7 +30,7 @@ $ npm run build
 ```
 
 ## Configuring
-[Here's a sample nginx config in openspaceteam.nginx.conf.](https://github.com/openspaceteam/frontend/blob/master/openspaceteam.nginx.conf).  
+[There's a sample nginx config in openspaceteam.nginx.conf.](https://github.com/openspaceteam/frontend/blob/master/openspaceteam.nginx.conf).  
 
 ## License
 This project is licensed under the GNU AGPL 3 License.  
