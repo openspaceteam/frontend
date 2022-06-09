@@ -7,19 +7,17 @@ browser. This is a fork from [OpenSpaceTeam's](https://github.com/openspaceteam)
 1. [30/05/22] Updated packages and fixed related bugs.
 
 ## Requirements
-- node.js  
-- npm  
-- nginx (not required but highly recommended)  
+- node.js
+- npm
 
 ## Installing
 ```
 $ git clone https://github.com/nat-foo/openspaceteam-game.git
 $ cd openspaceteam-game
-$ cp src/config.sample.js config.js
-$ nano src/config.js
-...
-$ npm install
-$ npm run build
+$ npm i
+$ npm start
+
+Run localhost on 0.0.0.0:8080.
 ```
 
 ## Configuring
