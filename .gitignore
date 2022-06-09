@@ -14,4 +14,4 @@ yarn-error.log*
 *.sln
 
 # Custom stuff
-src/config.js
+#src/config.js
