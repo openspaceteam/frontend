@@ -19,10 +19,10 @@
                   <icon name="spinner" pulse v-else></icon>
                 </span>
                 <span v-if="isOccupied(slot)">
-                  Giocatore {{ index + 1 }}
+                  Player {{ index + 1 }}
                 </span>
                 <span v-else>
-                  In attesa...
+                  Waiting...
                 </span>
                 <span >
                   <icon v-if="slot !== null" :name="slot.ready ? 'check-circle' : 'times-circle'"></icon>
@@ -45,12 +45,12 @@
         <div v-if="imHost()" class="lobby-button-container">
           <push-button @click="changeGameType()" :class="{ green: settings.public, orange: !settings.public }">
             <span><icon :name="gameTypeIcon"></icon></span>
-            Tipo partita: {{ gameTypeReadable }}
+            Game type: {{ gameTypeReadable }}
           </push-button>
         </div>
 
         <div v-if="!settings.public" class="lobby-button-container">
-          Condividi questo link con gli altri giocatori per invitarli in questa partita
+          Share this link with other players to invite them to this game
           <input class="input-field fluid" type="text" :value="lobbyLink" readonly @focus="$event.target.select()">
         </div>
 
@@ -61,14 +61,14 @@
           </push-button>
           <push-button class="blue bold" v-else-if="imHost() && gameCanStart()" @click="startGame()">
             <icon name="play"></icon>
-            Inizia partita!
+            Start game!
           </push-button>
         </div>
 
         <div id="exit" class="lobby-button-container">
           <push-button @click="leaveGame()">
             <icon name="sign-out"></icon>
-            Esci
+            Return
           </push-button>
         </div>
       </div>
@@ -217,7 +217,7 @@ export default {
       return this.settings.public ? 'unlock' : 'lock'
     },
     gameTypeReadable () {
-      return this.settings.public ? 'Pubblica' : 'Privata'
+      return this.settings.public ? 'Public' : 'Private'
     },
     settingsColourClass () {
       return this.settings.public ? 'green' : 'orange'
@@ -226,7 +226,7 @@ export default {
       return this.imReady() ? 'times' : 'check'
     },
     readyText () {
-      return this.imReady() ? 'Non sono ancora pronto' : 'Sono pronto!'
+      return this.imReady() ? "I'm not ready yet" : "I'm ready!"
     },
     lobbyLink () {
       return window.location.href

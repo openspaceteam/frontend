@@ -1,28 +1,28 @@
 <template>
   <div id="host" class="menu-pane">
     <div>
-      <h1 class="space-font pacchiano">Ospita partita</h1>
+      <h1 class="space-font pacchiano">Host game</h1>
       <div id="host-form" class="separated-container" v-if="!loading">
-        Nome partita:
+        Game name:
         <input class="input-field fluid separated" :class="{ 'error shake-animation': error }" v-model="name">
         <push-button @click="changeGameType()" :class="{ green: pub, orange: !pub }">
           <span><icon :name="gameTypeIcon"></icon></span>
-          Tipo partita: {{ gameTypeReadable }}
+          Match Type: {{ gameTypeReadable }}
         </push-button>
         <push-button bold @click="submit()">
           <span><icon name="gamepad"></icon></span>
-          <span>Crea partita</span>
+          <span>Create game</span>
         </push-button>
         <push-button @click="$router.push('/')">
           <span><icon name="chevron-left"></icon></span>
-          <span>Indietro</span>
+          <span>Back</span>
         </push-button>
       </div>
       <div v-else>
         <div>
           <icon name="circle-o-notch" spin scale="3"></icon>
         </div>
-        Creazione partita...
+        Game creation...
       </div>
     </div>
   </div>
@@ -60,7 +60,7 @@
         return this.pub ? 'unlock' : 'lock'
       },
       gameTypeReadable () {
-        return this.pub ? 'Pubblica' : 'Privata'
+        return this.pub ? 'Public' : 'Private'
       }
     }
   }

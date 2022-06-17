@@ -4,11 +4,11 @@
       <death-barrier :position='deathBarrierPosition'></death-barrier>
       <ship v-if="showShip" :left="shipLeft" :transitionSpeed="outroAnimation ? 4 : levelTransition ? 0 : 1"></ship>
       <transition name="v-fade">
-        <span class="outline" v-if="printingWelcome || levelTransition">Settore {{ levelInfo.level }}</span>
+        <span class="outline" v-if="printingWelcome || levelTransition">Sector {{ levelInfo.level }}</span>
       </transition>
 
       <transition name="v-fade">
-        <span class="outline" v-if="outroAnimation">Iperspazio!</span>
+        <span class="outline" v-if="outroAnimation">Hyperspace!</span>
       </transition>
     </div>
     <div class="bottom" v-if="printingWelcome">
@@ -17,7 +17,7 @@
     </div>
     <div class="bottom centered" v-else-if="waitingPlayers">
       <div><icon class="icon" name="circle-o-notch" scale="3" spin></icon></div>
-      <div class="space-font-mono"><span>In attesa degli altri giocatori...</span></div>
+      <div class="space-font-mono"><span>Waiting for the other players...</span></div>
     </div>
     <div class="bottom" v-else-if="inGame || outroAnimation">
       <transition name="v-fade">
@@ -26,7 +26,7 @@
       <transition name="v-fade-half" @after-enter="showSafe = false">
         <div id="safe" v-if="showSafe">
           <div><icon class="icon" name="fire-extinguisher" scale="5"></icon></div>
-          <div>Al sicuro!</div>
+          <div>Safe!</div>
         </div>
       </transition>
       <transition name="v-fade">
@@ -39,11 +39,11 @@
     </div>
     <div class="bottom centered" v-else-if="disconnected">
       <div><icon class="icon" name="unlink" scale="3"></icon></div>
-      <div class="space-font-mono"><span>Connessione persa</span></div>
+      <div class="space-font-mono"><span>Disconnected</span></div>
       <div class="back-button">
         <push-button class="orange space-font-mono" narrow @click="goToMenu()">
           <span><icon name="fire-extinguisher"></icon></span>
-          Torna al menu
+          Return to Menu
         </push-button>
       </div>
     </div>
@@ -51,9 +51,13 @@
       <div><icon class="icon" name="bomb" scale="3"></icon></div>
       <div class="space-font-mono"><span>Game over</span></div>
       <div class="back-button">
+        <push-button class="green space-font-mono" narrow @click="restartGame()">
+          <span><icon name="play-o"></icon></span>
+          Try again
+        </push-button>
         <push-button class="orange space-font-mono" narrow @click="goToMenu()">
           <span><icon name="frown-o"></icon></span>
-          Esci
+          Exit
         </push-button>
       </div>
     </div>
@@ -96,6 +100,7 @@
       Ship,
       WelcomeText,
       GameField,
+      DeathBarrier,
       DeathBarrier,
       LevelIntro,
       PushButton
@@ -176,6 +181,10 @@
       },
       goToMenu () {
         window.location.replace('/')
+      },
+      restartGame () {
+        //this.$io.emit("start_game")
+        this.status === PRINTING_WELCOME
       },
       haltGameDisconnect () {
         this.status = DISCONNECTED

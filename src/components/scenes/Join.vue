@@ -1,7 +1,7 @@
 <template>
   <div id="join" class="menu-pane">
     <div>
-      <h1 class="space-font pacchiano">Partite disponibili</h1>
+      <h1 class="space-font pacchiano">Matches available</h1>
       <div v-if="!loading && !joining" class="separated-container">
         <div class="games">
           <push-button
@@ -18,19 +18,19 @@
         </div>
         <push-button @click="$router.push('/join/private')" class="orange">
           <span><icon name="lock"></icon></span>
-          Accedi a una partita privata
+          Access a private game
         </push-button>
         <push-button bold @click="$router.push('/')">
           <span><icon name="chevron-left"></icon></span>
-          Indietro
+          Back
         </push-button>
       </div>
       <div v-else>
         <div>
           <icon name="circle-o-notch" spin scale="3"></icon>
         </div>
-        <div v-if="joining">Accesso alla partita...</div>
-        <div v-else>Caricamento partite...</div>
+        <div v-if="joining">Access the game...</div>
+        <div v-else>Loading games...</div>
       </div>
     </div>
   </div>

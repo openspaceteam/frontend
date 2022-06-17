@@ -6,17 +6,17 @@
       </div>
       <div class="actions separated-container">
         <div id="subtitle" class="space-font-mono">
-          Simulatore collaborativo di disastri spaziali
+          Collaborative simulator of space disasters
         </div>
-        <push-button @click="$router.push('/host')" class="space-font-mono" big :disabled="!connected">Ospita</push-button>
-        <push-button @click="joinLobby()" class="space-font-mono" big :disabled="!connected">Unisciti</push-button>
+        <push-button @click="$router.push('/host')" class="space-font-mono" big :disabled="!connected">Host</push-button>
+        <push-button @click="joinLobby()" class="space-font-mono" big :disabled="!connected">Join</push-button>
       </div>
     </div>
     <icon @click.native="toggleMusic()" class="mute-icon" :name="playingMusic ? 'volume-down' : 'volume-off'" scale="3"></icon>
     <div id="footer" class="space-font-mono">
       <span>v{{ version }} ~ </span>
-      <span>Realizzato da Giuseppe Guerra per l'ISIS Di Maggio ~ </span>
-      <span>Stato server:</span>
+      <span>Created by Giuseppe Guerra for ISIS Di Maggio ~ </span>
+      <span>Server status:</span>
       <icon v-if="connecting" name="spinner" class="connecting" pulse></icon>
       <icon v-else-if="connected && !connecting" class="online" name="check-circle"></icon>
       <icon v-else-if="!connected && !connecting" class="offline" name="unlink"></icon>

@@ -1,19 +1,19 @@
 <template>
   <div id="join-private" class="menu-pane">
     <div>
-      <h1 class="space-font pacchiano">Partita privata</h1>
+      <h1 class="space-font pacchiano">Private match</h1>
       <div v-if="!loading" class="separated-container">
-        Codice invito:
+        Invitation code:
         <div>
           <input type="password" class="input-field fluid" :class="{ 'error shake-animation': error }" v-model="code">
         </div>
         <push-button @click="join()" class="orange">
           <span><icon name="sign-in"></icon></span>
-          Accedi
+          Sign in
         </push-button>
         <push-button bold @click="$router.push('/join')">
           <span><icon name="chevron-left"></icon></span>
-          Indietro
+          Back
         </push-button>
       </div>
       <div id="join-private-loading" v-else>
@@ -21,7 +21,7 @@
           <icon name="key" :pulse="!d" :class="{ done: d }" scale="3"></icon>
           <icon :name="d ? 'unlock-alt' : 'lock'" class="rotated" scale="3"></icon>
         </div>
-        Accesso alla partita...
+        Access the game...
       </div>
     </div>
   </div>
