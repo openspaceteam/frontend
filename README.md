@@ -1,4 +1,4 @@
-# OpenSpaceTeam API
+# OpenSpaceTeam Game
 OpenSpaceTeam is an open source implementation of a 
 [Spaceteam](http://spaceteam.ca/)-like game, playable through the 
 browser. This is a fork from [OpenSpaceTeam's](https://github.com/openspaceteam) [frontend](https://github.com/openspaceteam/frontend), which referenced a separate [backend repo](https://github.com/openspaceteam/backend). As the original author is no longer active, I've forked both and updated them to work in 2022. As the base engine is quite flexible, I may push this in a new direction if I have the time.
