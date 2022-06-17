@@ -15,7 +15,6 @@ import Store from './store.js'
 import Bus from './bus.js'
 import AudioMixin from './audio.js'
 import GeneralMixin from './general.js'
-import Config from './config.js'
 import VueCircleSlider from 'vue-circle-slider'
 
 // Global components registration
@@ -42,7 +41,7 @@ new Vue({
   components: { App },
   mounted () {
     // Connect when the app is mounted on the DOM
-    Vue.prototype.$io = io(Config.serverURL, {
+    Vue.prototype.$io = io({
       transports: ['websocket', 'xhr-polling', 'polling', 'htmlfile', 'flashsocket'],
       reconnection: true,
       reconnectionDelay: 1000,
