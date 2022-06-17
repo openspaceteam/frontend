@@ -13,17 +13,18 @@ few unimplemented features, but what's been implemented works quite
 well.  
 There are few comments and some stuff is a bit hacky on the frontend-side.  
 
-## Requirements
+## Installing (Docker)
+Check out the [compose](https://github.com/openspaceteam/compose) repo.
+
+## Requirements for manual installation
 - node.js  
 - npm  
 - nginx (not required but highly recommended)  
 
-## Installing
+## Manual installation
 ```
 $ git clone https://github.com/openspaceteam/frontend.git
 $ cd frontend
-$ cp src/config.sample.js config.js
-$ nano src/config.js
 ...
 $ npm install
 $ npm run build
